@@ -1,17 +1,1538 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta http-equiv="Content-Style-Type" content="text/css">
-  <title></title>
-  <meta name="Generator" content="Cocoa HTML Writer">
-  <meta name="CocoaVersion" content="2685.2">
-  <style type="text/css">
-    body {background-color: #f2f1ec}
-    span.s1 {font-kerning: none}
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
+<title>Sthiti Limited</title>
+<meta name="theme-color" content="#1a1a1a" />
+<link rel="manifest" href="./manifest.json" />
+<link rel="apple-touch-icon" href="./icon-192.png" />
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<style>
+  :root{
+    --bg:#f5f4f0; --panel:#ffffff; --panel2:#f3f2ee; --line:#e2e0d8;
+    --dark:#1a1a1a; --gold:#b45309; --text:#1a1a1a; --muted:#8a8a86;
+    --red:#c0392b; --green:#1e8e5a; --blue:#2471a3; --purple:#7d3c98;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  body{margin:0; background:var(--bg); color:var(--text); font-family:'Segoe UI',-apple-system,Roboto,Arial,sans-serif; font-size:14px;}
+  input,select,button,textarea{font-family:inherit; font-size:14px;}
+  .hidden{display:none !important;}
+  .centerScreen{min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px; background:var(--dark);}
+  .card340{width:100%; max-width:360px; background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:28px 26px; box-shadow:0 10px 30px rgba(0,0,0,.25);}
+  .card340 h1{font-size:19px; margin:0 0 2px;}
+  .card340 p{color:var(--muted); font-size:12px; margin:0 0 18px;}
+  .field{display:flex; flex-direction:column; gap:4px; margin-bottom:12px;}
+  .field label{font-size:12px; color:var(--muted); font-weight:500;}
+  .field input, .field select, .field textarea{background:#fff; border:1px solid var(--line); border-radius:8px; padding:10px; color:var(--text);}
+  .btn{background:var(--gold); color:#fff; border:none; border-radius:8px; padding:10px 14px; font-weight:600; cursor:pointer;}
+  .btn:hover{opacity:.88;} .btn:disabled{opacity:.5;}
+  .btn-ghost{background:transparent; border:1px solid var(--line); color:var(--text);}
+  .btn-sm{padding:6px 10px; font-size:12px; border-radius:6px;}
+  .err{color:var(--red); font-size:12px; margin-top:8px; min-height:14px;}
+  .foot{margin-top:14px; font-size:11px; color:var(--muted); text-align:center; line-height:1.5;}
+  #app{display:flex; flex-direction:column; min-height:100vh;}
+  header{position:sticky; top:0; z-index:30; background:var(--dark); color:#fff; border-bottom:1px solid #000;}
+  .headTop{display:flex; align-items:center; justify-content:space-between; padding:12px 14px;}
+  .brand{display:flex; align-items:center; gap:10px;}
+  .brand .ic{width:32px; height:32px; border-radius:8px; background:rgba(180,83,9,.2); border:1px solid rgba(180,83,9,.55); display:flex; align-items:center; justify-content:center; font-weight:700; color:#f0a852; font-size:11px; flex-shrink:0;}
+  .brand .ti{font-weight:700; font-size:14px; color:#fff;}
+  .brand .su{font-size:10.5px; color:#aaa; cursor:pointer;}
+  .who{display:flex; align-items:center; gap:8px; font-size:11px; color:#ccc;}
+  .who .role{padding:2px 8px; border-radius:999px; background:rgba(255,255,255,.1); color:#fff; font-weight:500;}
+  .iconbtn{background:none; border:none; color:#ccc; padding:4px; cursor:pointer; font-size:15px; position:relative;}
+  .iconbtn:hover{color:#fff;}
+  .notifBadge{position:absolute; top:-1px; right:-1px; background:var(--red); color:#fff; font-size:9px; font-weight:700; border-radius:999px; min-width:14px; height:14px; line-height:14px; text-align:center; padding:0 3px;}
+  nav{display:flex; overflow-x:auto; gap:2px; padding:0 6px;}
+  nav button{flex-shrink:0; background:none; border:none; color:#bbb; padding:11px 13px; font-size:12.5px; font-weight:500; border-bottom:2px solid transparent; cursor:pointer; white-space:nowrap;}
+  nav button:hover{color:#fff;}
+  nav button.active{color:#fff; border-color:var(--gold); background:rgba(255,255,255,.06);}
+  main{flex:1; padding:16px; padding-bottom:80px; max-width:1200px; margin:0 auto; width:100%;}
+  .grid4{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+  @media(min-width:640px){.grid4{grid-template-columns:repeat(4,1fr);}}
+  .grid2{display:grid; grid-template-columns:1fr; gap:14px;}
+  @media(min-width:900px){.grid2{grid-template-columns:1fr 1fr;}}
+  .card{background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:16px; box-shadow:0 1px 2px rgba(0,0,0,.03);}
+  .stat .lab{font-size:10.5px; color:var(--muted); margin-bottom:4px; text-transform:uppercase; letter-spacing:.4px;}
+  .stat .val{font-size:22px; font-weight:700;}
+  .stat .sub{font-size:11px; color:var(--muted); margin-top:3px;}
+  .sectionHead{display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; gap:8px; flex-wrap:wrap;}
+  .sectionHead h2{font-size:15px; margin:0; color:var(--text); font-weight:600;}
+  .toolbar{display:flex; gap:6px; flex-wrap:wrap;}
+  .toolbar button{font-size:11.5px; padding:7px 11px; border-radius:7px; border:1px solid var(--line); background:var(--panel2); color:var(--text); cursor:pointer;}
+  .toolbar button:hover{background:#eae8e0;}
+  table{width:100%; border-collapse:collapse; font-size:12.5px;}
+  th{text-align:left; color:var(--muted); font-weight:600; text-transform:uppercase; font-size:10.5px; letter-spacing:.4px; padding:8px; background:var(--panel2); border-bottom:1px solid var(--line); white-space:nowrap;}
+  td{padding:8px; border-bottom:1px solid var(--line); vertical-align:middle; white-space:nowrap;}
+  tr:hover td{background:#fafaf7;}
+  .tableWrap{overflow-x:auto; -webkit-overflow-scrolling:touch; border-radius:8px; border:1px solid var(--line);}
+  .tableWrap table{border:none;}
+  .pill{padding:2px 9px; border-radius:999px; font-size:11px; font-weight:500; display:inline-block;}
+  .pill-notstarted{background:#eee; color:#666;}
+  .pill-progress{background:#fdf3e3; color:#a3620a; border:1px solid #f0d9a8;}
+  .pill-review{background:#eef1fd; color:var(--blue); border:1px solid #c9d7f0;}
+  .pill-approved,.pill-done{background:#eafbf0; color:var(--green); border:1px solid #bfe8cf;}
+  .pill-delayed{background:#fdecea; color:var(--red); border:1px solid #f3c6c1;}
+  .barBg{background:#e9e7e0; border-radius:999px; height:6px; width:90px; overflow:hidden;}
+  .barFg{background:linear-gradient(90deg,#1f5f8b,var(--blue)); height:100%;}
+  .progRow{display:flex; align-items:center; gap:7px;}
+  select.cellSel{background:#fff; color:var(--text); border:1px solid var(--line); border-radius:6px; padding:3px 5px; font-size:11px;}
+  .phaseBar{display:flex; align-items:center; gap:10px; font-size:12px; margin-bottom:9px;}
+  .phaseBar .nm{width:165px; flex-shrink:0; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .phaseBar .barBg{flex:1; width:auto; height:8px;}
+  .phaseBar .pct{width:34px; text-align:right; color:var(--muted); font-size:11px;}
+  .fab{position:fixed; right:16px; bottom:20px; z-index:25; display:flex; align-items:center; gap:6px; background:var(--gold); color:#fff; border:none; border-radius:999px; padding:11px 16px; font-weight:600; box-shadow:0 6px 18px rgba(0,0,0,.25); cursor:pointer;}
+  .modalOverlay{position:fixed; inset:0; background:rgba(20,18,14,.55); display:flex; align-items:flex-end; justify-content:center; z-index:50;}
+  @media(min-width:640px){.modalOverlay{align-items:center; padding:16px;}}
+  .modal{background:var(--panel); border:1px solid var(--line); width:100%; max-width:520px; border-radius:16px 16px 0 0; max-height:92vh; overflow-y:auto; padding:18px; box-shadow:0 20px 50px rgba(0,0,0,.25);}
+  @media(min-width:640px){.modal{border-radius:14px;}}
+  .modalHead{display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;}
+  .modalHead h3{margin:0; font-size:15px; font-weight:600;}
+  .row2{display:grid; grid-template-columns:1fr 1fr; gap:8px;}
+  .btnRow{display:flex; justify-content:flex-end; gap:8px; margin-top:14px; flex-wrap:wrap;}
+  .delBtn{color:var(--muted); background:none; border:none; cursor:pointer;}
+  .delBtn:hover{color:var(--red);}
+  .banner{background:#fdecea; border:1px solid #f3c6c1; color:#a1301f; border-radius:10px; padding:10px 12px; font-size:12px; margin-top:14px;}
+  .syncBanner{background:#eafbf0; border:1px solid #bfe8cf; color:#166a3f; border-radius:10px; padding:8px 12px; font-size:11px; margin-bottom:12px; display:flex; align-items:center; gap:6px;}
+  .userRow{display:flex; align-items:center; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--line);}
+  .userRow .nm{font-size:13px; font-weight:600;}
+  .userRow .meta{font-size:11px; color:var(--muted);}
+  .badge-admin{color:var(--gold); font-weight:600;}
+  .empty{color:var(--muted); font-size:12px; text-align:center; padding:30px 0;}
+  .projList{display:flex; flex-direction:column; gap:8px;}
+  .projItem{background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:14px 16px; display:flex; align-items:center; justify-content:space-between; cursor:pointer;}
+  .projItem:hover{background:var(--panel2);}
+  .projItem .nm{font-weight:600; font-size:14px;}
+  .projItem .meta{font-size:11px; color:var(--muted); margin-top:2px;}
+  .spin{display:inline-block; width:14px; height:14px; border:2px solid var(--line); border-top-color:var(--gold); border-radius:50%; animation:sp .7s linear infinite;}
+  @keyframes sp{to{transform:rotate(360deg);}}
+  .loadWrap{display:flex; align-items:center; justify-content:center; gap:8px; padding:40px 0; color:var(--muted); font-size:12px;}
+  .clockBtn{display:flex; align-items:center; justify-content:center; gap:8px; width:100%; padding:16px; border-radius:12px; border:none; font-weight:700; font-size:15px; cursor:pointer;}
+  .clockBtn.in{background:var(--green); color:#fff;}
+  .clockBtn.out{background:var(--red); color:#fff;}
+  .clockBtn:disabled{background:#ddd; color:#999;}
+  @media print{
+    header,nav,.fab,.toolbar,.btnRow,.modalOverlay{display:none !important;}
+    body{background:#fff;}
+    main{max-width:100%; padding:0;}
+  }
+  @media(min-width:900px){
+    header{position:fixed; left:0; top:0; bottom:0; width:230px; display:flex; flex-direction:column; border-right:1px solid #000; border-bottom:none; overflow-y:auto;}
+    .headTop{flex-direction:column; align-items:flex-start; gap:12px; padding:22px 18px; border-bottom:1px solid rgba(255,255,255,.08);}
+    .who{flex-direction:row; width:100%;}
+    nav{flex-direction:column; overflow-x:visible; padding:10px 8px; gap:1px; flex:1;}
+    nav button{text-align:left; border-bottom:none; border-left:2px solid transparent; padding:10px 12px; border-radius:6px;}
+    nav button.active{border-left-color:var(--gold); border-radius:6px 0 0 6px;}
+    #app{flex-direction:row;}
+    main{margin-left:230px; max-width:1200px; padding:22px 26px 80px;}
+    .fab{left:calc(230px + 20px); right:auto;}
+  }
+</style>
 </head>
 <body>
-<h1 style="margin: 0.0px 0.0px 2.0px 0.0px; font: 19.0px 'Helvetica Neue'; color: #141414; -webkit-text-stroke: #141414; background-color: #ffffff"><span class="s1"><b>code</b></span></h1>
+
+<!-- CONNECT -->
+<div id="connectScreen" class="centerScreen">
+  <div class="card340">
+    <h1>Connect to Cloud Sync</h1>
+    <p>One-time setup on this device. Paste the Supabase Project URL and publishable/anon key.</p>
+    <div class="field"><label>Project URL</label><input id="cfgUrl" placeholder="https://xxxxx.supabase.co"></div>
+    <div class="field"><label>Anon / Publishable key</label><input id="cfgKey" placeholder="sb_publishable_... or eyJhbGciOi..."></div>
+    <button class="btn" style="width:100%;" onclick="saveConfig()">Connect</button>
+    <div class="foot">Find these in Supabase → Settings → API.<br>Never paste the "service_role"/secret key here.</div>
+  </div>
+</div>
+
+<!-- LOGIN -->
+<div id="loginScreen" class="centerScreen hidden">
+  <div class="card340">
+    <h1>Sthiti Limited</h1>
+    <p>Sign in to continue</p>
+    <div class="field"><label>Username</label><input id="loginUser"></div>
+    <div class="field"><label>Password</label><input id="loginPass" type="password" onkeydown="if(event.key==='Enter') doLogin()"></div>
+    <button class="btn" style="width:100%;" onclick="doLogin()">Log in</button>
+    <div class="err" id="loginErr"></div>
+    <div class="foot" style="cursor:pointer;" onclick="resetConnection()">Wrong project? Reconnect</div>
+  </div>
+</div>
+
+<!-- OFFICE (office-wide: Dashboard, Projects, Interior Projects, Employees, Team Access) -->
+<div id="officeScreen" class="hidden">
+  <header>
+    <div class="headTop">
+      <div class="brand"><div class="ic">SL</div><div><div class="ti">Sthiti Limited</div><div class="su">Office</div></div></div>
+      <div class="who"><span id="pp_whoName"></span><span class="role" id="pp_whoRole"></span><button class="iconbtn" onclick="openNotifModal()">🔔<span class="notifBadge hidden"></span></button><button class="iconbtn" onclick="logout()">⎋</button></div>
+    </div>
+    <nav id="officeNav"></nav>
+  </header>
+  <main id="officeMain"></main>
+  <button class="fab hidden" id="officeFab">+ <span id="officeFabLabel">Add</span></button>
+</div>
+
+<!-- APP (single-project workspace, used for both Projects and Interior Projects) -->
+<div id="app" class="hidden">
+  <header>
+    <div class="headTop">
+      <div class="brand">
+        <div class="ic">SL</div>
+        <div>
+          <div class="ti">Sthiti Limited</div>
+          <div class="su" onclick="goToProjects()">← Office · <span id="curProjName"></span></div>
+        </div>
+      </div>
+      <div class="who"><span id="whoName"></span><span class="role" id="whoRole"></span><button class="iconbtn" onclick="openNotifModal()">🔔<span class="notifBadge hidden"></span></button><button class="iconbtn" onclick="logout()">⎋</button></div>
+    </div>
+    <nav id="tabNav"></nav>
+  </header>
+  <main id="main"></main>
+  <button class="fab hidden" id="fabBtn">+ <span id="fabLabel">Add</span></button>
+</div>
+
+<div id="modalRoot"></div>
+<input type="file" id="fileInput" accept=".xlsx,.xls,.csv" class="hidden" />
+
+
+<script>
+function showFatalError(msg){
+  document.body.insertAdjacentHTML("afterbegin", `<div style="position:fixed;top:0;left:0;right:0;z-index:9999;background:#c0392b;color:#fff;padding:10px 14px;font:12px monospace; word-break:break-word;">Error: ${msg}</div>`);
+}
+window.addEventListener("error", function(e){
+  showFatalError(`${e.message} (line ${e.lineno})`);
+});
+window.addEventListener("unhandledrejection", function(e){
+  showFatalError(`(async) ${e.reason?.message || e.reason}`);
+});
+/* ===================== CONFIG / SUPABASE ===================== */
+let sb = null;
+function initSupabase(){
+  const url = localStorage.getItem("sl_url"), key = localStorage.getItem("sl_key");
+  if(!url || !key) return false;
+  try{
+    if(!/^https?:\/\//i.test(url)) throw new Error("bad url");
+    sb = window.supabase.createClient(url, key);
+    return true;
+  } catch(e){
+    // Stale or malformed values from an earlier attempt — clear them and fall back to the Connect screen instead of crashing.
+    localStorage.removeItem("sl_url"); localStorage.removeItem("sl_key");
+    sb = null;
+    return false;
+  }
+}
+function saveConfig(){
+  const url = document.getElementById("cfgUrl").value.trim();
+  const key = document.getElementById("cfgKey").value.trim();
+  if(!url || !key){ alert("Both fields are required."); return; }
+  if(!/^https?:\/\//i.test(url)){ alert("Project URL must start with https:// — check Supabase Settings → API."); return; }
+  localStorage.setItem("sl_url", url); localStorage.setItem("sl_key", key);
+  boot();
+}
+function uid(){ return 'id-' + Math.random().toString(36).slice(2,10) + Date.now().toString(36); }
+function resetConnection(){
+  localStorage.removeItem("sl_url"); localStorage.removeItem("sl_key");
+  sb = null; session = null;
+  boot();
+}
+function todayISO(){ return new Date().toISOString().slice(0,10); }
+function addDays(dateStr, n){ const d = new Date(dateStr+"T00:00:00"); d.setDate(d.getDate()+n); return d.toISOString().slice(0,10); }
+
+/* ===================== SESSION / STATE ===================== */
+let session = null; // {id, username, name, role, designation}
+let currentModule = null; // 'projects' | 'interior'
+let currentProject = null;
+let tab = "overview";
+let cache = { tasks:[], costs:[], phases:[] };
+let notifCache = []; let notifPollStarted = false;
+let officeCache = { projects:[], interiorProjects:[], directory:[] };
+let empCache = { employees:[], leaves:[], workhour:[], attendance:[] };
+
+/* ===================== AUTH ===================== */
+async function doLogin(){
+  const u = document.getElementById("loginUser").value.trim();
+  const p = document.getElementById("loginPass").value;
+  document.getElementById("loginErr").textContent = "";
+  if(!u || !p){ document.getElementById("loginErr").textContent = "Username and password are required."; return; }
+  const email = u.toLowerCase() + "@sthiti.internal";
+  const { error } = await sb.auth.signInWithPassword({ email, password: p });
+  if(error){ document.getElementById("loginErr").textContent = "Login failed: " + error.message; return; }
+  session = null;
+  boot();
+}
+async function logout(){
+  session = null; currentProject = null; currentModule = null;
+  await sb.auth.signOut();
+  boot();
+}
+
+async function boot(){
+  document.getElementById("connectScreen").classList.add("hidden");
+  document.getElementById("loginScreen").classList.add("hidden");
+  document.getElementById("officeScreen").classList.add("hidden");
+  document.getElementById("app").classList.add("hidden");
+
+  if(!initSupabase()){
+    document.getElementById("connectScreen").classList.remove("hidden");
+    return;
+  }
+  const { data:{ session: authSession } } = await sb.auth.getSession();
+  if(!authSession){
+    session = null;
+    document.getElementById("loginScreen").classList.remove("hidden");
+    return;
+  }
+  if(!session){
+    const { data: profile, error } = await sb.from("sl_users").select("id,username,name,role,designation").eq("user_id", authSession.user.id).maybeSingle();
+    if(error || !profile){
+      await sb.auth.signOut();
+      session = null;
+      document.getElementById("loginScreen").classList.remove("hidden");
+      document.getElementById("loginErr").textContent = "Signed in, but no matching profile found in sl_users (check user_id link).";
+      return;
+    }
+    session = profile;
+    loadNotifications();
+    if(!notifPollStarted){ notifPollStarted = true; setInterval(loadNotifications, 5*60*1000); }
+  }
+  if(!currentProject){
+    showOfficeScreen();
+    return;
+  }
+  showApp();
+}
+function isAdmin(){ return session && (session.role==="admin" || session.role==="super_admin"); }
+function isSuperAdmin(){ return session && session.role==="super_admin"; }
+
+/* ===================== NOTIFICATIONS ===================== */
+async function loadNotifications(){
+  const { data } = await sb.from("sl_notifications").select("*").order("created_at",{ascending:false}).limit(50);
+  notifCache = data || [];
+  updateNotifBadges();
+}
+function updateNotifBadges(){
+  const unread = notifCache.filter(n=>!n.read_at).length;
+  document.querySelectorAll(".notifBadge").forEach(el=>{
+    el.textContent = unread>0 ? (unread>9?"9+":unread) : "";
+    el.classList.toggle("hidden", unread===0);
+  });
+}
+function openNotifModal(){
+  document.getElementById("modalRoot").innerHTML = `
+  <div class="modalOverlay" onclick="if(event.target===this) closeModal()">
+    <div class="modal">
+      <div class="modalHead"><h3>Notifications</h3><button class="iconbtn" onclick="closeModal()">✕</button></div>
+      ${notifCache.length ? notifCache.map(n=>`
+        <div class="userRow" style="cursor:pointer; ${n.read_at?'opacity:.55;':''}" onclick="markNotifRead('${n.id}')">
+          <div><div class="nm">${n.message}</div><div class="meta">${new Date(n.created_at).toLocaleString("en-GB")}</div></div>
+          ${!n.read_at ? '<span class="pill pill-progress">new</span>' : ''}
+        </div>`).join("") : '<div class="empty">No notifications yet.</div>'}
+      <div class="btnRow"><button class="btn-ghost btn" onclick="closeModal()">Close</button></div>
+    </div>
+  </div>`;
+}
+async function markNotifRead(id){
+  await sb.from("sl_notifications").update({ read_at: new Date().toISOString() }).eq("id", id);
+  await loadNotifications();
+  openNotifModal();
+}
+function closeModal(){ document.getElementById("modalRoot").innerHTML = ""; }
+
+/* ===================== OFFICE SCREEN ===================== */
+let officeTab = "dashboard";
+function showOfficeScreen(){
+  document.getElementById("officeScreen").classList.remove("hidden");
+  document.getElementById("pp_whoName").textContent = session.name;
+  document.getElementById("pp_whoRole").textContent = session.role==="super_admin"?"Super Admin":session.role==="admin"?"Admin":"Employee";
+  renderOfficeNav(); renderOfficeTab();
+}
+function renderOfficeNav(){
+  const tabs = [["dashboard","Dashboard"],["projects","Projects"],["interior","Interior Projects"],["employees","Employees"]];
+  if(isAdmin()) tabs.push(["team","Team Access"]);
+  document.getElementById("officeNav").innerHTML = tabs.map(([k,l])=>`<button class="${officeTab===k?'active':''}" onclick="setOfficeTab('${k}')">${l}</button>`).join("");
+}
+function setOfficeTab(t){ officeTab=t; renderOfficeNav(); renderOfficeTab(); }
+function renderOfficeTab(){
+  const main = document.getElementById("officeMain");
+  const fab = document.getElementById("officeFab");
+  fab.classList.add("hidden");
+  if(officeTab==="dashboard") renderOfficeDashboard(main, fab);
+  else if(officeTab==="projects") renderProjectList(main, fab, "projects");
+  else if(officeTab==="interior") renderProjectList(main, fab, "interior");
+  else if(officeTab==="employees") renderEmployees(main, fab);
+  else if(officeTab==="team") renderTeamAccess(main, fab);
+}
+function goToProjects(){
+  currentProject = null; currentModule = null;
+  boot();
+}
+
+async function loadDirectory(){
+  if(officeCache.directory.length) return;
+  const { data } = await sb.from("sl_employees").select("id, sl_users(name)");
+  officeCache.directory = data || [];
+}
+function employeeNameById(id){
+  if(!id) return null;
+  const e = officeCache.directory.find(x=>x.id===id);
+  return e ? (e.sl_users?.name || null) : null;
+}
+
+async function renderProjectList(main, fab, module){
+  await loadDirectory();
+  const table = module==="projects" ? "sl_projects" : "sl_interior_projects";
+  main.innerHTML = `<div class="loadWrap"><span class="spin"></span> Loading…</div>`;
+  const { data, error } = await sb.from(table).select("*").order("created_at",{ascending:false});
+  if(error){ main.innerHTML = `<div class="empty">Couldn't load. ${error.message}</div>`; return; }
+  const label = module==="projects" ? "Projects" : "Interior Projects";
+  main.innerHTML = `<div class="sectionHead"><h2>${label}</h2></div><div class="projList" id="projListWrap"></div>`;
+  const wrap = document.getElementById("projListWrap");
+  if(!data || data.length===0){
+    wrap.innerHTML = `<div class="empty">No ${label.toLowerCase()} yet. ${isAdmin()?'Tap "+ New" to create one.':'Ask an admin to create one.'}</div>`;
+  } else {
+    wrap.innerHTML = data.map(p=>`
+      <div class="projItem" onclick='openProject(${JSON.stringify(p).replace(/'/g,"&apos;")}, "${module}")'>
+        <div><div class="nm">${p.name}</div><div class="meta">${p.client_name?p.client_name+' · ':''}Started ${p.start_date}</div></div>
+        <div style="color:var(--muted)">›</div>
+      </div>`).join("");
+  }
+  if(isAdmin()){
+    fab.classList.remove("hidden");
+    document.getElementById("officeFabLabel").textContent = "New " + (module==="projects"?"Project":"Interior Project");
+    fab.onclick = ()=>openNewProjectModal(module);
+  }
+}
+function openNewProjectModal(module){
+  document.getElementById("modalRoot").innerHTML = `
+  <div class="modalOverlay" onclick="if(event.target===this) closeModal()">
+    <div class="modal">
+      <div class="modalHead"><h3>New ${module==='projects'?'Project':'Interior Project'}</h3><button class="iconbtn" onclick="closeModal()">✕</button></div>
+      <div class="field"><label>Project name</label><input id="np_name"></div>
+      <div class="field"><label>Client name</label><input id="np_client"></div>
+      <div class="field"><label>Start date</label><input id="np_start" type="date" value="${todayISO()}"></div>
+      <div class="btnRow"><button class="btn-ghost btn" onclick="closeModal()">Cancel</button><button class="btn" onclick="createProject('${module}')">Create</button></div>
+    </div>
+  </div>`;
+}
+async function createProject(module){
+  const name = document.getElementById("np_name").value.trim();
+  const client_name = document.getElementById("np_client").value.trim();
+  const start_date = document.getElementById("np_start").value;
+  if(!name){ alert("Project name is required."); return; }
+  const table = module==="projects" ? "sl_projects" : "sl_interior_projects";
+  const { error } = await sb.from(table).insert({ id: uid(), name, client_name, start_date });
+  if(error){ alert("Couldn't create: " + error.message); return; }
+  closeModal(); renderOfficeTab();
+}
+async function openProject(p, module){
+  currentProject = p; currentModule = module;
+  await loadProjectData();
+  showApp();
+}
+
+/* ===================== DESIGN ===================== */
+function statusOptions(){ return ["Not Started","In Progress","Review Needed","Approved","Delayed"]; }
+function statusPillClass(s){
+  return s==='Approved'||s==='Done' ? 'pill-approved' : s==='Review Needed' ? 'pill-review' : s==='Delayed' ? 'pill-delayed' : s==='In Progress' ? 'pill-progress' : 'pill-notstarted';
+}
+function renderDesign(main, fab){
+  fab.classList.add("hidden");
+  const items = cache.tasks.filter(t=>t.phase==="design");
+  main.innerHTML = `
+    <div class="sectionHead"><h2>Design</h2></div>
+    <div class="card">
+      ${items.map(t=>`
+        <div class="userRow" style="align-items:flex-start; flex-wrap:wrap;">
+          <div style="flex:1; min-width:200px;">
+            <div class="nm">${t.task}</div>
+            <div class="meta">Assigned: ${employeeNameById(t.assigned_to)||'Unassigned'} · Deadline: ${t.deadline||'-'} ${t.file_link?`· <a href="${t.file_link}" target="_blank">File link</a>`:''}</div>
+            <div class="progRow" style="margin-top:6px;">
+              <select class="cellSel" ${canEdit()?'':'disabled'} onchange="updateTask('${t.id}',{status:this.value})">
+                ${statusOptions().map(s=>`<option ${s===t.status?'selected':''}>${s}</option>`).join("")}
+              </select>
+              <input type="range" min="0" max="100" value="${t.progress||0}" ${canEdit()?'':'disabled'} style="width:70px" onchange="updateTask('${t.id}',{progress:Number(this.value)})">
+              <span style="color:var(--muted); font-size:11px;">${t.progress||0}%</span>
+            </div>
+          </div>
+          <div class="toolbar">
+            ${isAdmin() ? `<button onclick="openAssignModal('${t.id}')">Assign</button>` : ""}
+            <button onclick="openCommentsModal('${t.id}')">Comments</button>
+            ${t.task==="Clients Meeting Update" ? `<button onclick="openMeetingLogModal('${t.id}')">Meeting Log</button>` : ""}
+          </div>
+        </div>`).join("")}
+      ${items.length===0 ? '<div class="empty">Design checklist not set up yet for this project.</div>' : ''}
+    </div>
+  `;
+}
+function openAssignModal(taskId){
+  const t = cache.tasks.find(x=>x.id===taskId);
+  if(!t) return;
+  document.getElementById("modalRoot").innerHTML = `
+  <div class="modalOverlay" onclick="if(event.target===this) closeModal()">
+    <div class="modal">
+      <div class="modalHead"><h3>Assign · ${t.task}</h3><button class="iconbtn" onclick="closeModal()">✕</button></div>
+      <div class="field"><label>Assign to</label>
+        <select id="da_assignee"><option value="">— Unassigned —</option>${officeCache.directory.map(e=>`<option value="${e.id}" ${e.id===t.assigned_to?'selected':''}>${e.sl_users?.name||'-'}</option>`).join("")}</select>
+      </div>
+      <div class="field"><label>Deadline</label><input id="da_deadline" type="date" value="${t.deadline||''}"></div>
+      <div class="field"><label>File / drawing link</label><input id="da_file" value="${t.file_link||''}" placeholder="https://..."></div>
+      ${t.phase==='construction' ? `
+      <div style="font-size:12px; font-weight:600; margin:12px 0 6px;">What can the assigned employee see for this Work?</div>
+      <label style="display:flex; align-items:center; gap:8px; font-size:13px; margin-bottom:6px;"><input type="checkbox" id="da_show_planned" ${t.show_planned_cost?'checked':''}> Planned Cost</label>
+      <label style="display:flex; align-items:center; gap:8px; font-size:13px; margin-bottom:6px;"><input type="checkbox" id="da_show_pct" ${t.show_cost_pct?'checked':''}> Cost % (Actual vs Planned)</label>
+      <label style="display:flex; align-items:center; gap:8px; font-size:13px; margin-bottom:6px;"><input type="checkbox" id="da_show_rest" ${t.show_rest_cost?'checked':''}> Rest Cost (remaining budget)</label>
+      <div class="foot" style="text-align:left;">Leave all unchecked to show none of these — Actual Cost itself stays visible since they may need to add entries to it.</div>
+      ` : ''}
+      <div class="btnRow"><button class="btn-ghost btn" onclick="closeModal()">Cancel</button><button class="btn" onclick="saveAssign('${taskId}')">Save</button></div>
+    </div>
+  </div>`;
+}
+async function saveAssign(taskId){
+  const employee_id = document.getElementById("da_assignee").value || null;
+  const deadline = document.getElementById("da_deadline").value || null;
+  const file_link = document.getElementById("da_file").value.trim() || null;
+  // conflict check against both modules if dates exist on this task
+  const t = cache.tasks.find(x=>x.id===taskId);
+  if(employee_id && t.plan_start && t.plan_end){
+    const { data: conflicts } = await sb.rpc("sl_find_conflicts", { p_employee_id: employee_id, p_start: t.plan_start, p_end: t.plan_end, p_exclude_project: currentProject.id });
+    if(conflicts && conflicts.length){
+      const c = conflicts[0];
+      if(!confirm(`${employeeNameById(employee_id)} is already assigned to "${c.task}" (${c.source_module}) ${c.plan_start}–${c.plan_end}, which overlaps. Save anyway?`)) return;
+    }
+  }
+  const patch = { assigned_to: employee_id, deadline, file_link };
+  if(t.phase==='construction'){
+    patch.show_planned_cost = document.getElementById("da_show_planned").checked;
+    patch.show_cost_pct = document.getElementById("da_show_pct").checked;
+    patch.show_rest_cost = document.getElementById("da_show_rest").checked;
+  }
+  await updateTask(taskId, patch);
+  closeModal();
+}
+async function openCommentsModal(taskId){
+  const { data } = await sb.from("sl_task_comments").select("*, sl_users(name)").eq("task_id", taskId).order("created_at",{ascending:false});
+  const list = data || [];
+  document.getElementById("modalRoot").innerHTML = `
+  <div class="modalOverlay" onclick="if(event.target===this) closeModal()">
+    <div class="modal">
+      <div class="modalHead"><h3>Comments</h3><button class="iconbtn" onclick="closeModal()">✕</button></div>
+      <div class="field"><textarea id="cm_body" rows="2" placeholder="Add a note..."></textarea></div>
+      <div class="btnRow" style="margin-top:0;"><button class="btn" onclick="addComment('${taskId}')">Add</button></div>
+      <div style="margin-top:14px;">
+        ${list.length ? list.map(c=>`<div class="userRow"><div><div class="nm">${c.sl_users?.name||'-'}</div><div class="meta">${c.body}</div><div class="meta">${new Date(c.created_at).toLocaleString("en-GB")}</div></div></div>`).join("") : '<div class="empty">No comments yet.</div>'}
+      </div>
+    </div>
+  </div>`;
+}
+async function addComment(taskId){
+  const body = document.getElementById("cm_body").value.trim();
+  if(!body) return;
+  await sb.from("sl_task_comments").insert({ id: uid(), task_id: taskId, author_id: session.id, body });
+  openCommentsModal(taskId);
+}
+async function openMeetingLogModal(taskId){
+  const { data } = await sb.from("sl_meetings").select("*").eq("project_id", currentProject.id).eq("project_kind", currentModule).order("date",{ascending:false});
+  const list = data || [];
+  document.getElementById("modalRoot").innerHTML = `
+  <div class="modalOverlay" onclick="if(event.target===this) closeModal()">
+    <div class="modal">
+      <div class="modalHead"><h3>Client Meetings</h3><button class="iconbtn" onclick="closeModal()">✕</button></div>
+      <div class="row2">
+        <div class="field"><label>Date</label><input id="mt_date" type="date" value="${todayISO()}"></div>
+        <div class="field"><label>Time</label><input id="mt_time" type="time"></div>
+      </div>
+      <div class="field"><label>Location</label><input id="mt_location"></div>
+      <div class="field"><label>Observation notes</label><textarea id="mt_notes" rows="2"></textarea></div>
+      <div style="font-size:12px; font-weight:600; margin:10px 0 4px;">Next meeting (optional)</div>
+      <div class="row2">
+        <div class="field"><label>Date</label><input id="mt_next_date" type="date"></div>
+        <div class="field"><label>Time</label><input id="mt_next_time" type="time"></div>
+      </div>
+      <div class="field"><label>Location</label><input id="mt_next_location"></div>
+      <div class="btnRow"><button class="btn-ghost btn" onclick="closeModal()">Cancel</button><button class="btn" onclick="saveMeetingLog('${taskId}')">Save</button></div>
+      <div style="font-size:12px; font-weight:600; margin:14px 0 6px;">History</div>
+      ${list.length ? list.map(m=>`<div class="userRow"><div><div class="nm">${m.date} ${m.time||''} · ${m.location||'-'}</div><div class="meta">${m.observation_notes||''}</div></div></div>`).join("") : '<div class="empty">No meetings logged yet.</div>'}
+    </div>
+  </div>`;
+}
+async function saveMeetingLog(taskId){
+  const { error } = await sb.from("sl_meetings").insert({
+    id: uid(), project_id: currentProject.id, project_kind: currentModule,
+    date: document.getElementById("mt_date").value, time: document.getElementById("mt_time").value || null,
+    location: document.getElementById("mt_location").value.trim(), observation_notes: document.getElementById("mt_notes").value.trim(),
+    next_meeting_date: document.getElementById("mt_next_date").value || null, next_meeting_time: document.getElementById("mt_next_time").value || null,
+    next_meeting_location: document.getElementById("mt_next_location").value.trim() || null, created_by: session.id
+  });
+  if(error){ alert("Couldn't save: "+error.message); return; }
+  alert("Meeting logged."); openMeetingLogModal(taskId);
+}
+
+/* ===================== CONSTRUCTION ===================== */
+function renderConstruction(main, fab){
+  const tasks = cache.tasks.filter(t=>t.phase==="construction");
+  const byStage = {};
+  tasks.forEach(t=>{ const k = t.stage || "Unstaged"; byStage[k] = byStage[k]||[]; byStage[k].push(t); });
+  const stageNames = Object.keys(byStage);
+  main.innerHTML = `
+    <div class="sectionHead">
+      <h2>Construction</h2>
+      ${canEdit() ? `<div class="toolbar"><button onclick="exportConstruction()">⬇ Excel</button><button onclick="triggerImport()">⬆ Import Schedule</button><button onclick="window.print()">🖨 Export PDF</button></div>` : ""}
+    </div>
+    ${stageNames.map(stage=>`
+    <div class="card" style="margin-bottom:14px;">
+      <div class="sectionHead"><h2>${stage}</h2></div>
+      <div class="tableWrap"><table>
+        <thead><tr><th>Work</th><th>Assigned</th><th>Material</th><th>Sourcing</th><th>Vendor</th><th>Contact</th><th>Site Date</th><th>Deadline</th><th>Status</th><th>Planned</th><th>Actual</th><th>Rest</th><th>Cost %</th><th></th></tr></thead>
+        <tbody>
+        ${byStage[stage].map(t=>{
+          const planned = Number(t.planned_cost||0);
+          const actual = actualCostForTask(t.id);
+          const rest = planned - actual;
+          const costPct = planned>0 ? Math.round((actual/planned)*100) : (actual>0?100:0);
+          const mine = t.assigned_to && myEmployeeId && t.assigned_to === myEmployeeId;
+          const canSeePlanned = isAdmin() || (mine && t.show_planned_cost);
+          const canSeePct = isAdmin() || (mine && t.show_cost_pct);
+          const canSeeRest = isAdmin() || (mine && t.show_rest_cost);
+          const bd = costBreakdownForTask(t.id);
+          const bdTitle = `Material: ৳${bd.material.toLocaleString()} · Vendor: ৳${bd.vendor.toLocaleString()} · Mobilization: ৳${bd.mobilization.toLocaleString()}`;
+          return `
+          <tr>
+            <td>${t.task}${t.file_link?` · <a href="${t.file_link}" target="_blank">📎</a>`:''}</td>
+            <td style="color:var(--muted)">${employeeNameById(t.assigned_to)||'-'}</td>
+            <td style="color:var(--muted)">${t.material||'-'}</td>
+            <td style="color:var(--muted)">${t.sourcing_place||'-'}</td>
+            <td style="color:var(--muted)">${t.vendor||'-'}</td>
+            <td style="color:var(--muted)">${t.vendor_contact||'-'}</td>
+            <td style="color:var(--muted)">${t.site_date||'-'}</td>
+            <td style="color:${t.deadline && t.deadline<todayISO() && !['Done','Approved'].includes(t.status)?'var(--red)':'var(--muted)'}">${t.deadline||'-'}</td>
+            <td><select class="cellSel" ${canEdit()?'':'disabled'} onchange="updateTask('${t.id}',{status:this.value})">${statusOptions().map(s=>`<option ${s===t.status?'selected':''}>${s}</option>`).join("")}</select></td>
+            <td>${canSeePlanned ? (isAdmin() ? `<input type="number" class="cellSel" style="width:80px;" value="${planned}" onchange="updateTask('${t.id}',{planned_cost:Number(this.value)})">` : '৳'+planned.toLocaleString()) : '<span style="color:var(--muted)">Hidden</span>'}</td>
+            <td title="${bdTitle}">৳${actual.toLocaleString()}</td>
+            <td>${canSeeRest ? '৳'+rest.toLocaleString() : '<span style="color:var(--muted)">Hidden</span>'}</td>
+            <td>${canSeePct ? `<span class="pill ${costPct>100?'pill-delayed':costPct>=80?'pill-progress':'pill-approved'}">${costPct}%</span>` : '<span style="color:var(--muted)">Hidden</span>'}</td>
+            <td>
+              <button class="delBtn" onclick="openWorkCostModal('${t.id}','${t.task.replace(/'/g,"&apos;")}')" title="Add cost entry">৳+</button>
+              <button class="delBtn" onclick="openCommentsModal('${t.id}')" title="Comments">💬</button>
+              <button class="delBtn" onclick="openHistoryModal('${t.id}')" title="Edit trail">🕘</button>
+              ${isAdmin()?`<button class="delBtn" onclick="openAssignModal('${t.id}')" title="Assign / file link / visibility">✎</button><button class="delBtn" onclick="removeTask('${t.id}')">✕</button>`:''}
+            </td>
+          </tr>`;}).join("")}
+        </tbody>
+      </table></div>
+    </div>`).join("")}
+    ${tasks.length===0 ? '<div class="card"><div class="empty">No construction tasks yet. Tap + to add one.</div></div>' : ''}
+  `;
+  if(isAdmin()){
+    fab.classList.remove("hidden");
+    document.getElementById("fabLabel").textContent = "Add Task";
+    fab.onclick = ()=>openAddTaskModal();
+  }
+}
+function openWorkCostModal(taskId, taskName){
+  const entries = costsForTask(taskId);
+  const catLabel = { material:"Material", vendor:"Vendor", mobilization:"Mobilization" };
+  document.getElementById("modalRoot").innerHTML = `
+  <div class="modalOverlay" onclick="if(event.target===this) closeModal()">
+    <div class="modal">
+      <div class="modalHead"><h3>Add Cost · ${taskName}</h3><button class="iconbtn" onclick="closeModal()">✕</button></div>
+      <div class="field"><label>Category</label>
+        <select id="wc_category">
+          <option value="material">Material</option>
+          <option value="vendor">Vendor</option>
+          <option value="mobilization">Mobilization</option>
+        </select>
+      </div>
+      <div class="field"><label>Assign employee</label>
+        <select id="wc_employee"><option value="">— Unassigned —</option>${officeCache.directory.map(e=>`<option value="${e.id}">${e.sl_users?.name||'-'}</option>`).join("")}</select>
+      </div>
+      <div class="field"><label>Date</label><input id="wc_date" type="date" value="${todayISO()}"></div>
+      <div class="field"><label>Description</label><input id="wc_desc" placeholder="e.g. Vendor bill — first installment"></div>
+      <div class="field"><label>Amount</label><input id="wc_amount" type="number" value="0"></div>
+      <div class="btnRow" style="margin-top:0;"><button class="btn-ghost btn" onclick="closeModal()">Cancel</button><button class="btn" onclick="saveWorkCost('${taskId}')">Add</button></div>
+      <div style="font-size:12px; font-weight:600; margin:14px 0 6px;">Entries so far (adds up to Actual Cost)</div>
+      ${entries.length ? entries.map(c=>`<div class="userRow"><div><div class="nm">${catLabel[c.category]||c.category} — ৳${Number(c.amount).toLocaleString()}</div><div class="meta">${c.description||''} ${c.assigned_employee_id?'· '+employeeNameById(c.assigned_employee_id):''} · ${c.date}</div></div></div>`).join("") : '<div class="empty">No cost entries yet — material and vendor bills can be added here as they come in.</div>'}
+    </div>
+  </div>`;
+}
+async function saveWorkCost(taskId){
+  const amount = Number(document.getElementById("wc_amount").value||0);
+  if(!amount){ alert("Enter an amount greater than 0."); return; }
+  const { error } = await sb.from("sl_work_costs").insert({
+    id: uid(), module: currentModule, task_id: taskId,
+    category: document.getElementById("wc_category").value,
+    assigned_employee_id: document.getElementById("wc_employee").value || null,
+    date: document.getElementById("wc_date").value, description: document.getElementById("wc_desc").value.trim(),
+    amount, added_by: session.id
+  });
+  if(error){ alert("Couldn't save: "+error.message); return; }
+  await loadProjectData(); openWorkCostModal(taskId, document.querySelector('.modalHead h3').textContent.replace('Add Cost · ',''));
+  renderTab();
+}
+function openAddTaskModal(){
+  document.getElementById("modalRoot").innerHTML = `
+  <div class="modalOverlay" onclick="if(event.target===this) closeModal()">
+    <div class="modal">
+      <div class="modalHead"><h3>Add Construction Task (Work)</h3><button class="iconbtn" onclick="closeModal()">✕</button></div>
+      <div class="field"><label>Task / Work name</label><input id="ct_task"></div>
+      <div class="field"><label>Stage</label><input id="ct_stage" placeholder="e.g. Piling, Foundation, Structure, Finishing" list="stageList">
+        <datalist id="stageList">${[...new Set(cache.tasks.filter(t=>t.stage).map(t=>t.stage))].map(s=>`<option value="${s}">`).join("")}</datalist>
+      </div>
+      <div class="row2">
+        <div class="field"><label>Plan start</label><input id="ct_start" type="date" value="${todayISO()}"></div>
+        <div class="field"><label>Plan end</label><input id="ct_end" type="date" value="${todayISO()}"></div>
+      </div>
+      <div class="field"><label>Deadline</label><input id="ct_deadline" type="date"></div>
+      <div class="row2">
+        <div class="field"><label>Material</label><input id="ct_material"></div>
+        <div class="field"><label>Sourcing place</label><input id="ct_sourcing"></div>
+      </div>
+      <div class="row2">
+        <div class="field"><label>Vendor</label><input id="ct_vendor"></div>
+        <div class="field"><label>Vendor contact</label><input id="ct_vendor_contact"></div>
+      </div>
+      <div class="row2">
+        <div class="field"><label>Site date (material/mobilization)</label><input id="ct_site_date" type="date"></div>
+        <div class="field"><label>Planned cost</label><input id="ct_planned_cost" type="number" value="0"></div>
+      </div>
+      <div class="btnRow"><button class="btn-ghost btn" onclick="closeModal()">Cancel</button><button class="btn" onclick="saveNewTask()">Save</button></div>
+    </div>
+  </div>`;
+}
+async function saveNewTask(){
+  const task = document.getElementById("ct_task").value.trim();
+  if(!task){ alert("Task name is required."); return; }
+  const table = taskTable();
+  const row = {
+    id: uid(), project_id: currentProject.id, phase:"construction", task,
+    stage: document.getElementById("ct_stage").value.trim() || null,
+    plan_start: document.getElementById("ct_start").value, plan_end: document.getElementById("ct_end").value,
+    deadline: document.getElementById("ct_deadline").value || null,
+    vendor: document.getElementById("ct_vendor")?.value.trim() || null,
+    material: document.getElementById("ct_material").value.trim() || null,
+    sourcing_place: document.getElementById("ct_sourcing").value.trim() || null,
+    vendor_contact: document.getElementById("ct_vendor_contact").value.trim() || null,
+    site_date: document.getElementById("ct_site_date").value || null,
+    planned_cost: Number(document.getElementById("ct_planned_cost").value||0),
+    status:"Not Started", progress:0
+  };
+  const { error } = await sb.from(table).insert(row);
+  if(error){ alert("Couldn't save: "+error.message); return; }
+  closeModal(); await loadProjectData(); renderTab();
+}
+async function removeTask(id){
+  if(!confirm("Remove this task?")) return;
+  await sb.from(taskTable()).delete().eq("id", id);
+  await loadProjectData(); renderTab();
+}
+async function updateTask(id, patch){
+  await sb.from(taskTable()).update(patch).eq("id", id);
+  await loadProjectData(); renderTab();
+}
+async function openHistoryModal(taskId){
+  const { data } = await sb.from(historyTable()).select("*, sl_users(name)").eq("task_id", taskId).order("changed_at",{ascending:false});
+  const rows = data || [];
+  document.getElementById("modalRoot").innerHTML = `
+  <div class="modalOverlay" onclick="if(event.target===this) closeModal()">
+    <div class="modal">
+      <div class="modalHead"><h3>Edit Trail</h3><button class="iconbtn" onclick="closeModal()">✕</button></div>
+      ${rows.length ? rows.map(h=>`<div class="userRow"><div><div class="nm">${h.field}: ${h.old_value||'-'} → ${h.new_value||'-'}</div><div class="meta">${h.sl_users?.name||'-'} · ${new Date(h.changed_at).toLocaleString("en-GB")}</div></div></div>`).join("") : '<div class="empty">No changes logged yet.</div>'}
+      <div class="btnRow"><button class="btn-ghost btn" onclick="closeModal()">Close</button></div>
+    </div>
+  </div>`;
+}
+
+/* ===================== COSTING (interior only, cost-masked) ===================== */
+function renderCosting(main, fab){
+  fab.classList.add("hidden");
+  const works = cache.tasks.filter(t=>t.phase==="construction");
+  const canSeeCosts = isAdmin();
+  const enriched = works.map(t=>{
+    const planned = Number(t.planned_cost||0);
+    const actual = actualCostForTask(t.id);
+    return { ...t, planned, actual, rest: planned-actual, costPct: planned>0?Math.round((actual/planned)*100):(actual>0?100:0) };
+  });
+  let summaryHtml = "";
+  if(canSeeCosts){
+    const totalPlanned = enriched.reduce((s,t)=>s+t.planned,0);
+    const totalActual = enriched.reduce((s,t)=>s+t.actual,0);
+    const variance = totalActual - totalPlanned;
+    const pctOver = totalPlanned>0 ? Math.round((variance/totalPlanned)*100) : 0;
+    const byStage = {};
+    enriched.forEach(t=>{ const k=t.stage||'Unstaged'; byStage[k]=byStage[k]||{planned:0,actual:0}; byStage[k].planned+=t.planned; byStage[k].actual+=t.actual; });
+    summaryHtml = `
+      <div class="card" style="margin-bottom:14px;">
+        <div class="sectionHead"><h2>Cost Summary</h2><div class="toolbar"><button onclick="exportCosting()">⬇ Excel</button><button onclick="window.print()">🖨 PDF</button></div></div>
+        <div class="grid4">
+          <div class="card stat"><div class="lab">Total Planned</div><div class="val">৳${totalPlanned.toLocaleString()}</div></div>
+          <div class="card stat"><div class="lab">Total Actual</div><div class="val">৳${totalActual.toLocaleString()}</div></div>
+          <div class="card stat"><div class="lab">Rest</div><div class="val" style="color:${variance>0?'var(--red)':'var(--green)'}">৳${(-variance).toLocaleString()}</div></div>
+          <div class="card stat"><div class="lab">% vs Budget</div><div class="val" style="color:${pctOver>0?'var(--red)':'var(--green)'}">${pctOver>0?'+':''}${pctOver}%</div></div>
+        </div>
+        ${pctOver>10 ? `<div class="banner" style="margin-top:12px;">⚠ Project is ${pctOver}% over planned budget.</div>` : ''}
+      </div>
+      <div class="card" style="margin-bottom:14px;">
+        <div class="sectionHead"><h2>By Stage</h2></div>
+        ${Object.entries(byStage).map(([stage,v])=>{
+          const pct = v.planned>0 ? Math.min(200, Math.round((v.actual/v.planned)*100)) : (v.actual>0?100:0);
+          return `<div class="phaseBar"><div class="nm">${stage}</div><div class="barBg"><div class="barFg" style="width:${Math.min(100,pct)}%; background:${pct>100?'var(--red)':'linear-gradient(90deg,#1f5f8b,var(--blue))'};"></div></div><div class="pct">৳${v.actual.toLocaleString()}</div></div>`;
+        }).join("") || '<div class="empty">No works with costs yet.</div>'}
+      </div>
+    `;
+  }
+  main.innerHTML = `
+    ${summaryHtml}
+    <div class="sectionHead"><h2>Cost by Work</h2></div>
+    <div class="card"><div class="tableWrap"><table>
+      <thead><tr><th>Work</th><th>Stage</th><th>Planned</th><th>Actual</th><th>Rest</th><th>Cost %</th></tr></thead>
+      <tbody>
+      ${enriched.map(t=>`<tr>
+        <td>${t.task}</td><td style="color:var(--muted)">${t.stage||'-'}</td>
+        <td>৳${t.planned.toLocaleString()}</td><td>৳${t.actual.toLocaleString()}</td>
+        <td>${canSeeCosts?'৳'+t.rest.toLocaleString():'<span style="color:var(--muted)">Restricted</span>'}</td>
+        <td><span class="pill ${t.costPct>100?'pill-delayed':t.costPct>=80?'pill-progress':'pill-approved'}">${t.costPct}%</span></td>
+      </tr>`).join("")}
+      </tbody>
+    </table></div>
+    ${enriched.length===0?'<div class="empty">No construction works yet — add them from the Construction tab.</div>':''}
+    ${!canSeeCosts ? '<div class="foot" style="text-align:left; margin-top:10px;">"Rest" (remaining budget) is visible to Admin and Super Admin only.</div>' : ''}
+    </div>
+  `;
+}
+async function exportConstruction(){
+  const tasks = cache.tasks.filter(t=>t.phase==="construction");
+  const myEmpId = await getMyEmployeeId();
+
+  // Sheet 1 — current snapshot, respecting the same visibility rules shown on screen
+  const summary = tasks.map(t=>{
+    const planned = Number(t.planned_cost||0);
+    const actual = actualCostForTask(t.id);
+    const rest = planned-actual;
+    const costPct = planned>0 ? Math.round((actual/planned)*100) : (actual>0?100:0);
+    const mine = t.assigned_to && myEmpId && t.assigned_to===myEmpId;
+    const canSeePlanned = isAdmin() || (mine && t.show_planned_cost);
+    const canSeeRest = isAdmin() || (mine && t.show_rest_cost);
+    const canSeePct = isAdmin() || (mine && t.show_cost_pct);
+    return {
+      Stage: t.stage||'-', Work: t.task, Assigned: employeeNameById(t.assigned_to)||'-',
+      Material: t.material||'-', Sourcing: t.sourcing_place||'-', Vendor: t.vendor||'-', Contact: t.vendor_contact||'-',
+      "Site Date": t.site_date||'-', Deadline: t.deadline||'-', Status: t.status,
+      Planned: canSeePlanned ? planned : 'Hidden', Actual: actual,
+      Rest: canSeeRest ? rest : 'Hidden', "Cost %": canSeePct ? costPct : 'Hidden'
+    };
+  });
+
+  // Sheet 2 — every individual cost entry ever logged (full history, not just totals)
+  const costHistory = tasks.flatMap(t=>
+    costsForTask(t.id).map(c=>({
+      Work: t.task, Category: c.category||'-', Date: c.date, Description: c.description||'-',
+      Amount: c.amount, "Added By": c.sl_users?.name||'-'
+    }))
+  ).sort((a,b)=>(a.Date||'').localeCompare(b.Date||''));
+
+  // Sheet 3 — status/field change audit trail
+  const taskIds = tasks.map(t=>t.id);
+  let statusHistory = [];
+  if(taskIds.length){
+    const { data } = await sb.from(historyTable()).select("*, sl_users(name)").in("task_id", taskIds).order("changed_at");
+    const taskNameById = Object.fromEntries(tasks.map(t=>[t.id, t.task]));
+    statusHistory = (data||[]).map(h=>({
+      Work: taskNameById[h.task_id]||'-', Field: h.field, "Old Value": h.old_value||'-', "New Value": h.new_value||'-',
+      "Changed By": h.sl_users?.name||'-', "Changed At": new Date(h.changed_at).toLocaleString("en-GB")
+    }));
+  }
+
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(summary), "Construction Summary");
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(costHistory.length?costHistory:[{Note:"No cost entries logged yet"}]), "Cost History");
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(statusHistory.length?statusHistory:[{Note:"No changes logged yet"}]), "Change History");
+  XLSX.writeFile(wb, `Construction_${currentProject.name.replace(/\s+/g,'_')}_${todayISO()}.xlsx`);
+}
+function exportCosting(){
+  const works = cache.tasks.filter(t=>t.phase==="construction").map(t=>{
+    const planned = Number(t.planned_cost||0), actual = actualCostForTask(t.id);
+    return { Work:t.task, Stage:t.stage||'-', Planned:planned, Actual:actual, Rest:planned-actual, "Cost %": planned>0?Math.round((actual/planned)*100):0 };
+  });
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(works), "Cost by Work");
+  XLSX.writeFile(wb, `Costing_${currentProject.name.replace(/\s+/g,'_')}.xlsx`);
+}
+function triggerImport(){ document.getElementById("fileInput").click(); }
+function parseDateCell(v){
+  if(!v) return null;
+  if(typeof v === "number"){ const d = XLSX.SSF.parse_date_code(v); if(!d) return null; return `${d.y}-${String(d.m).padStart(2,'0')}-${String(d.d).padStart(2,'0')}`; }
+  const s = String(v).trim();
+  const d = new Date(s);
+  return isNaN(d) ? null : d.toISOString().slice(0,10);
+}
+let pendingImport = null;
+document.getElementById("fileInput").addEventListener("change", async (e)=>{
+  const file = e.target.files[0]; if(!file) return;
+  e.target.value = "";
+  await loadDirectory();
+  const buf = await file.arrayBuffer();
+  const wb = XLSX.read(buf, { type: "array", cellDates:false });
+  const ws = wb.Sheets[wb.SheetNames[0]];
+  const rows = XLSX.utils.sheet_to_json(ws, { defval: "" });
+  if(!rows.length){ alert("No rows found in that file."); return; }
+  const headers = Object.keys(rows[0]);
+  const find = (cands) => headers.find(h => cands.some(c => h.toLowerCase().includes(c)));
+  const hTask = find(["task","activity","work","item"]);
+  const hAssignee = find(["assign","employee","responsible"]);
+  const hDeadline = find(["deadline"]);
+  const hStart = find(["start"]);
+  const hEnd = find(["end","finish"]);
+  const hVendor = find(["vendor","contractor"]);
+  if(!hTask){ alert("Couldn't find a Task/Activity column. Check your file's headers."); return; }
+  const unmatched = new Set();
+  const newTasks = rows.filter(r=>String(r[hTask]).trim()).map(r=>{
+    let assigned_to = null;
+    if(hAssignee && String(r[hAssignee]).trim()){
+      const name = String(r[hAssignee]).trim().toLowerCase();
+      const match = officeCache.directory.find(e=>(e.sl_users?.name||"").trim().toLowerCase()===name);
+      if(match) assigned_to = match.id; else unmatched.add(String(r[hAssignee]).trim());
+    }
+    return {
+      id: uid(), project_id: currentProject.id, phase:"construction", task: String(r[hTask]).trim(),
+      vendor: hVendor ? String(r[hVendor]).trim() : null,
+      plan_start: hStart ? parseDateCell(r[hStart]) : null, plan_end: hEnd ? parseDateCell(r[hEnd]) : null,
+      deadline: hDeadline ? parseDateCell(r[hDeadline]) : null,
+      assigned_to, status:"Not Started", progress:0,
+    };
+  });
+  if(unmatched.size) alert("Couldn't match these names to an employee — imported unassigned: " + [...unmatched].join(", "));
+
+  const conflicts = [];
+  for(const t of newTasks){
+    if(!t.assigned_to || !t.plan_start || !t.plan_end) continue;
+    const { data } = await sb.rpc("sl_find_conflicts", { p_employee_id: t.assigned_to, p_start: t.plan_start, p_end: t.plan_end, p_exclude_project: currentProject.id });
+    if(data && data.length) conflicts.push({ task:t, clashes:data });
+  }
+  if(conflicts.length){
+    pendingImport = { newTasks, conflictIds: new Set(conflicts.map(c=>c.task.id)) };
+    document.getElementById("modalRoot").innerHTML = `
+    <div class="modalOverlay" onclick="if(event.target===this) closeModal()">
+      <div class="modal">
+        <div class="modalHead"><h3>Scheduling Conflicts Found</h3><button class="iconbtn" onclick="closeModal()">✕</button></div>
+        <div class="banner" style="margin-top:0;">${conflicts.length} of ${newTasks.length} task(s) overlap with the same employee's commitment elsewhere.</div>
+        ${conflicts.map(c=>`<div class="userRow"><div><div class="nm">${employeeNameById(c.task.assigned_to)} — ${c.task.task}</div><div class="meta">Clashes with "${c.clashes[0].task}" (${c.clashes[0].source_module}), ${c.clashes[0].plan_start}–${c.clashes[0].plan_end}</div></div></div>`).join("")}
+        <div class="btnRow" style="flex-wrap:wrap;">
+          <button class="btn-ghost btn" onclick="closeModal()">Cancel</button>
+          <button class="btn-ghost btn" onclick="confirmImportTasks(true)">Skip Conflicting, Import Rest</button>
+          <button class="btn" onclick="confirmImportTasks(false)">Import All Anyway</button>
+        </div>
+      </div>
+    </div>`;
+    return;
+  }
+  if(!confirm(`Import ${newTasks.length} task(s) into Construction?`)) return;
+  const { error } = await sb.from(taskTable()).insert(newTasks);
+  if(error){ alert("Import failed: "+error.message); return; }
+  await loadProjectData(); renderTab();
+  alert(`Imported ${newTasks.length} task(s).`);
+});
+async function confirmImportTasks(skipConflicts){
+  if(!pendingImport) return;
+  let toInsert = pendingImport.newTasks;
+  if(skipConflicts) toInsert = toInsert.filter(t=>!pendingImport.conflictIds.has(t.id));
+  pendingImport = null; closeModal();
+  if(toInsert.length===0){ alert("Nothing to import."); return; }
+  const { error } = await sb.from(taskTable()).insert(toInsert);
+  if(error){ alert("Import failed: "+error.message); return; }
+  await loadProjectData(); renderTab();
+  alert(`Imported ${toInsert.length} task(s).`);
+}
+
+function taskTable(){ return currentModule==="projects" ? "sl_project_tasks" : "sl_interior_tasks"; }
+function historyTable(){ return currentModule==="projects" ? "sl_task_history" : "sl_interior_task_history"; }
+function commentsTable(){ return "sl_task_comments"; } // comments only modeled for Module A tasks; interior uses inline notes in v1
+
+let myEmployeeId; // undefined = not fetched, null = no employee profile, string = the id
+async function getMyEmployeeId(){
+  if(myEmployeeId !== undefined) return myEmployeeId;
+  const { data } = await sb.from("sl_employees").select("id").eq("user_id", session.id).maybeSingle();
+  myEmployeeId = data ? data.id : null;
+  return myEmployeeId;
+}
+async function loadProjectData(){
+  await loadDirectory();
+  await getMyEmployeeId();
+  const { data } = await sb.from(taskTable()).select("*").eq("project_id", currentProject.id).order("plan_start");
+  cache.tasks = data || [];
+  const constructionIds = cache.tasks.filter(t=>t.phase==="construction").map(t=>t.id);
+  if(constructionIds.length){
+    const { data: wc } = await sb.from("sl_work_costs").select("*, sl_users(name)").eq("module", currentModule).in("task_id", constructionIds);
+    cache.workCosts = wc || [];
+  } else {
+    cache.workCosts = [];
+  }
+}
+function costsForTask(taskId){ return (cache.workCosts||[]).filter(c=>c.task_id===taskId); }
+function actualCostForTask(taskId){ return costsForTask(taskId).reduce((s,c)=>s+Number(c.amount||0),0); }
+function costBreakdownForTask(taskId){
+  const entries = costsForTask(taskId);
+  const by = { material:0, vendor:0, mobilization:0 };
+  entries.forEach(c=>{ if(c.category && by[c.category]!==undefined) by[c.category]+=Number(c.amount||0); });
+  return by;
+}
+function showApp(){
+  document.getElementById("officeScreen").classList.add("hidden");
+  document.getElementById("app").classList.remove("hidden");
+  document.getElementById("whoName").textContent = session.name;
+  document.getElementById("whoRole").textContent = session.role==="super_admin"?"Super Admin":session.role==="admin"?"Admin":"Employee";
+  document.getElementById("curProjName").textContent = currentProject.name + (currentModule==="interior" ? " (Interior)" : "");
+  tab = "overview";
+  renderNav(); renderTab();
+}
+function renderNav(){
+  const tabs = [["overview","Overview"],["design","Design"],["construction","Construction"],["costing","Costing"]];
+  document.getElementById("tabNav").innerHTML = tabs.map(([k,l])=>`<button class="${tab===k?'active':''}" onclick="setTab('${k}')">${l}</button>`).join("");
+}
+function setTab(t){ tab=t; renderNav(); renderTab(); }
+function canEdit(){ return session && (isAdmin() || session.role==="employee"); } // shared team tool: any logged-in user can update task data (matches spec: "other general fields employee and admin both can update")
+function renderTab(){
+  const main = document.getElementById("main");
+  const fab = document.getElementById("fabBtn");
+  fab.classList.add("hidden");
+  if(tab==="overview") renderOverview(main);
+  else if(tab==="design") renderDesign(main, fab);
+  else if(tab==="construction") renderConstruction(main, fab);
+  else if(tab==="costing") renderCosting(main, fab);
+}
+function renderOverview(main){
+  const tasks = cache.tasks;
+  const avg = tasks.length ? Math.round(tasks.reduce((s,t)=>s+Number(t.progress||0),0)/tasks.length) : 0;
+  const byPhase = {};
+  tasks.forEach(t=>{ byPhase[t.phase] = byPhase[t.phase] || []; byPhase[t.phase].push(t); });
+  main.innerHTML = `
+    <div class="sectionHead"><h2>Project Overview</h2><div class="toolbar"><button onclick="window.print()">🖨 Export PDF</button></div></div>
+    <div class="grid4" style="margin-bottom:16px;">
+      <div class="card stat"><div class="lab">Overall Progress</div><div class="val">${avg}%</div></div>
+      <div class="card stat"><div class="lab">Total Tasks</div><div class="val">${tasks.length}</div></div>
+      <div class="card stat"><div class="lab">Done</div><div class="val">${tasks.filter(t=>t.status==='Done'||t.status==='Approved').length}</div></div>
+      <div class="card stat"><div class="lab">Overdue</div><div class="val" style="color:var(--red)">${tasks.filter(t=>t.deadline && t.deadline<todayISO() && !['Done','Approved'].includes(t.status)).length}</div></div>
+    </div>
+    <div class="card">
+      <div class="sectionHead"><h2>By Phase</h2></div>
+      ${Object.entries(byPhase).map(([ph,list])=>{
+        const a = Math.round(list.reduce((s,t)=>s+Number(t.progress||0),0)/list.length);
+        return `<div class="phaseBar"><div class="nm">${ph}</div><div class="barBg"><div class="barFg" style="width:${a}%"></div></div><div class="pct">${a}%</div></div>`;
+      }).join("") || '<div class="empty">No tasks yet.</div>'}
+    </div>
+  `;
+}
+
+/* ===================== OFFICE DASHBOARD ===================== */
+async function renderOfficeDashboard(main, fab){
+  fab.classList.add("hidden");
+  main.innerHTML = `<div class="loadWrap"><span class="spin"></span> Loading…</div>`;
+  await loadDirectory();
+  const todayStr = todayISO();
+  const calls = [
+    sb.from("sl_project_tasks").select("*, sl_projects(name)"),
+    sb.from("sl_interior_tasks").select("*, sl_interior_projects(name)"),
+    sb.from("sl_projects").select("*"), sb.from("sl_interior_projects").select("*"),
+    sb.from("sl_meetings").select("*").not("next_meeting_date","is",null).order("next_meeting_date"),
+  ];
+  if(isAdmin()){
+    calls.push(sb.from("sl_employees").select("*, sl_users(name)").eq("active", true));
+    calls.push(sb.from("sl_attendance").select("*").eq("date", todayStr));
+    calls.push(sb.from("sl_leave_requests").select("*").eq("date", todayStr));
+    calls.push(sb.from("sl_workhour_requests").select("*, sl_employees(sl_users(name))").eq("status","pending"));
+    calls.push(sb.from("sl_leave_requests").select("*, sl_employees(sl_users(name))").eq("status","pending"));
+  }
+  const r = await Promise.all(calls);
+  const pTasks = (r[0].data||[]).map(t=>({...t, projName:t.sl_projects?.name, module:'Projects'}));
+  const iTasks = (r[1].data||[]).map(t=>({...t, projName:t.sl_interior_projects?.name, module:'Interior'}));
+  const allTasks = [...pTasks, ...iTasks];
+  const projects = [...(r[2].data||[]).map(p=>({...p,module:'Projects'})), ...(r[3].data||[]).map(p=>({...p,module:'Interior'}))];
+  const meetings = r[4].data || [];
+  const emp = isAdmin() ? (r[5].data||[]) : [];
+  const att = isAdmin() ? (r[6].data||[]) : [];
+  const leave = isAdmin() ? (r[7].data||[]) : [];
+  const pendingShift = isAdmin() ? (r[8]?.data||[]) : [];
+  const pendingLeaveAll = isAdmin() ? (r[9]?.data||[]) : [];
+
+  const overdue = allTasks.filter(t=>t.deadline && t.deadline<todayStr && !['Done','Approved'].includes(t.status));
+  const dueSoon = allTasks.filter(t=>t.deadline && t.deadline>=todayStr && t.deadline<=addDays(todayStr,3) && !['Done','Approved'].includes(t.status));
+  const assignedToday = allTasks.filter(t=>t.assigned_to && t.plan_start && t.plan_end && t.plan_start<=todayStr && t.plan_end>=todayStr);
+  const assignedNoDate = allTasks.filter(t=>t.assigned_to && (!t.plan_start || !t.plan_end) && !['Done','Approved'].includes(t.status));
+  const avgAll = allTasks.length ? Math.round(allTasks.reduce((s,t)=>s+Number(t.progress||0),0)/allTasks.length) : 0;
+
+  let attendanceHtml = "";
+  if(isAdmin()){
+    const shifts = [["10-6","10:00 AM – 6:00 PM"],["2-10","2:00 PM – 10:00 PM"]];
+    attendanceHtml = `
+    <div class="card" style="margin-bottom:14px;">
+      <div class="sectionHead"><h2>Today's Attendance</h2><div class="toolbar"><button onclick="exportTable('attendance')">⬇ Excel</button></div></div>
+      <div class="grid4">
+        ${shifts.map(([sh,label])=>{
+          const shiftEmp = emp.filter(e=>e.work_hour_shift===sh);
+          const present = shiftEmp.filter(e=>att.find(a=>a.employee_id===e.id && (a.status==='present'||a.check_in))).length;
+          return `<div class="card stat"><div class="lab">${label}</div><div class="val">${present}/${shiftEmp.length}</div><div class="sub">present today</div></div>`;
+        }).join("")}
+      </div>
+      ${leave.length ? `<div style="margin-top:10px;">${leave.map(l=>{
+        const e = emp.find(x=>x.id===l.employee_id);
+        return `<div class="userRow"><div class="nm">${e?.sl_users?.name||'-'} — ${l.type} leave</div><span class="pill ${l.status==='approved'?'pill-approved':l.status==='half_day_unpaid'?'pill-delayed':'pill-progress'}">${l.status}</span></div>`;
+      }).join("")}</div>` : ''}
+    </div>`;
+  }
+
+  const pieSlices = donutSvg(avgAll);
+
+  main.innerHTML = `
+    <div class="syncBanner">● Office-wide overview — Projects + Interior Projects combined</div>
+    ${isAdmin() && (pendingShift.length||pendingLeaveAll.length) ? `
+    <div class="card" style="margin-bottom:14px;">
+      <div class="sectionHead"><h2>Pending Approvals</h2></div>
+      ${pendingShift.map(w=>`<div class="userRow"><div><div class="nm">${w.sl_employees?.sl_users?.name||'-'} — shift to ${w.requested_shift}</div><div class="meta">from week of ${w.requested_week}</div></div><div class="toolbar"><button onclick="reviewWorkhour('${w.id}','approved')">Approve</button><button onclick="reviewWorkhour('${w.id}','rejected')">Reject</button></div></div>`).join("")}
+      ${pendingLeaveAll.map(l=>`<div class="userRow"><div><div class="nm">${l.sl_employees?.sl_users?.name||'-'} — ${l.type} leave, ${l.date}</div></div><div class="toolbar"><button onclick="reviewLeave('${l.id}','approved')">Approve</button><button onclick="reviewLeave('${l.id}','rejected')">Reject</button></div></div>`).join("")}
+    </div>` : ''}
+    ${attendanceHtml}
+    <div class="grid2" style="margin-bottom:14px;">
+      <div class="card">
+        <div class="sectionHead"><h2>Overall Completion</h2><div class="toolbar"><button onclick="exportTable('completion')">⬇ Excel</button></div></div>
+        <div style="display:flex; align-items:center; gap:18px;">
+          ${pieSlices}
+          <div style="flex:1;">
+            ${projects.map(p=>{
+              const pt = allTasks.filter(t=>t.project_id===p.id);
+              const a = pt.length ? Math.round(pt.reduce((s,t)=>s+Number(t.progress||0),0)/pt.length) : 0;
+              return `<div class="phaseBar"><div class="nm">${p.name} <span style="color:var(--muted)">(${p.module})</span></div><div class="barBg"><div class="barFg" style="width:${a}%"></div></div><div class="pct">${pt.length?a+'%':'—'}</div></div>`;
+            }).join("") || '<div class="empty">No projects yet.</div>'}
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="sectionHead"><h2>Meeting Schedule</h2></div>
+        ${meetings.slice(0,8).map(m=>{
+          const meetTask = allTasks.find(t=>t.project_id===m.project_id && t.task==='Clients Meeting Update');
+          return `<div class="userRow"><div><div class="nm">${m.next_meeting_date} ${m.next_meeting_time||''}</div><div class="meta">${m.next_meeting_location||'-'} ${meetTask?.assigned_to ? '· '+employeeNameById(meetTask.assigned_to) : ''}</div></div></div>`;
+        }).join("") || '<div class="empty">No upcoming meetings logged.</div>'}
+      </div>
+    </div>
+    ${overdue.length ? `<div class="banner" style="margin-bottom:14px;">${overdue.length} task(s) past deadline across all projects.</div>` : ''}
+    <div class="card" style="margin-bottom:14px;">
+      <div class="sectionHead"><h2>Deadlines</h2><div class="toolbar"><button onclick="exportTable('deadlines')">⬇ Excel</button></div></div>
+      <div class="tableWrap"><table>
+        <thead><tr><th>Module</th><th>Project</th><th>Task</th><th>Assigned</th><th>Deadline</th><th>Status</th></tr></thead>
+        <tbody>${[...overdue,...dueSoon].map(t=>`<tr>
+          <td>${t.module}</td><td>${t.projName||'-'}</td><td>${t.task||''}</td>
+          <td style="color:var(--muted)">${employeeNameById(t.assigned_to)||'-'}</td>
+          <td style="color:${t.deadline<todayStr?'var(--red)':'var(--gold)'}">${t.deadline}</td><td>${t.status}</td>
+        </tr>`).join("")}</tbody>
+      </table></div>
+      ${(overdue.length+dueSoon.length)===0 ? '<div class="empty">Nothing overdue or due soon.</div>' : ''}
+    </div>
+    <div class="card">
+      <div class="sectionHead"><h2>Today's Work Grid</h2><div class="toolbar"><button onclick="exportTable('assignments')">⬇ Excel</button></div></div>
+      <div class="foot" style="text-align:left; margin-bottom:8px;">Tasks whose planned dates cover today.</div>
+      <div class="tableWrap"><table>
+        <thead><tr><th>Employee</th><th>Module</th><th>Project</th><th>Task</th><th>Status</th>${isAdmin()?'<th></th>':''}</tr></thead>
+        <tbody>${assignedToday.map(t=>`<tr><td>${employeeNameById(t.assigned_to)||'-'}</td><td>${t.module}</td><td>${t.projName||'-'}</td><td>${t.task||''}</td><td>${t.status}</td>${isAdmin()?`<td><button class="delBtn" title="Emergency reassign" onclick='openReassignModal(${JSON.stringify({id:t.id,module:t.module,name:t.task})})'>⚡ Reassign</button></td>`:''}</tr>`).join("")}</tbody>
+      </table></div>
+      ${assignedToday.length===0 ? '<div class="empty">Nothing scheduled with today\'s date specifically. See below for other active work.</div>' : ''}
+      ${assignedNoDate.length ? `
+      <div class="foot" style="text-align:left; margin:12px 0 6px;">Other active assignments (no specific dates set)</div>
+      <div class="tableWrap"><table>
+        <thead><tr><th>Employee</th><th>Module</th><th>Project</th><th>Task</th><th>Status</th></tr></thead>
+        <tbody>${assignedNoDate.map(t=>`<tr><td>${employeeNameById(t.assigned_to)||'-'}</td><td>${t.module}</td><td>${t.projName||'-'}</td><td>${t.task||''}</td><td>${t.status}</td></tr>`).join("")}</tbody>
+      </table></div>` : ''}
+    </div>
+  `;
+  window._dashExportData = { attendance:{emp,att}, allTasks, projects };
+}
+function openReassignModal({id, module, name}){
+  const table = module==='Projects' ? 'sl_project_tasks' : 'sl_interior_tasks';
+  document.getElementById("modalRoot").innerHTML = `
+  <div class="modalOverlay" onclick="if(event.target===this) closeModal()">
+    <div class="modal">
+      <div class="modalHead"><h3>Emergency Reassign · ${name}</h3><button class="iconbtn" onclick="closeModal()">✕</button></div>
+      <div class="field"><label>New assignee</label>
+        <select id="qr_emp">${officeCache.directory.map(e=>`<option value="${e.id}">${e.sl_users?.name||'-'}</option>`).join("")}</select>
+      </div>
+      <div class="foot" style="text-align:left;">Use this when someone can't come in (sick, emergency) and their task needs to move to someone else right now.</div>
+      <div class="btnRow"><button class="btn-ghost btn" onclick="closeModal()">Cancel</button><button class="btn" onclick="saveReassign('${id}','${table}')">Reassign Now</button></div>
+    </div>
+  </div>`;
+}
+async function saveReassign(taskId, table){
+  const empId = document.getElementById("qr_emp").value;
+  const { error } = await sb.from(table).update({ assigned_to: empId }).eq("id", taskId);
+  if(error){ alert("Couldn't reassign: "+error.message); return; }
+  closeModal(); renderOfficeTab();
+}
+function donutSvg(pct){
+  const r=40, c=2*Math.PI*r, off=c*(1-pct/100);
+  return `<svg width="100" height="100" viewBox="0 0 100 100" style="flex-shrink:0;">
+    <circle cx="50" cy="50" r="${r}" fill="none" stroke="#eee" stroke-width="12"/>
+    <circle cx="50" cy="50" r="${r}" fill="none" stroke="var(--blue)" stroke-width="12" stroke-dasharray="${c}" stroke-dashoffset="${off}" stroke-linecap="round" transform="rotate(-90 50 50)"/>
+    <text x="50" y="55" text-anchor="middle" font-size="18" font-weight="700" fill="var(--text)">${pct}%</text>
+  </svg>`;
+}
+function exportTable(kind){
+  const d = window._dashExportData; if(!d) return;
+  const wb = XLSX.utils.book_new();
+  let rows = [];
+  if(kind==='attendance') rows = d.attendance.emp.map(e=>{ const a=d.attendance.att.find(x=>x.employee_id===e.id); return { Employee:e.sl_users?.name, Shift:e.work_hour_shift, Status: a?a.status:'not marked' }; });
+  else if(kind==='completion') rows = d.projects.map(p=>{ const pt=d.allTasks.filter(t=>t.project_id===p.id); const a=pt.length?Math.round(pt.reduce((s,t)=>s+Number(t.progress||0),0)/pt.length):0; return { Project:p.name, Module:p.module, "Completion %":a }; });
+  else if(kind==='deadlines') rows = d.allTasks.filter(t=>t.deadline).map(t=>({ Module:t.module, Project:t.projName, Task:t.task, Deadline:t.deadline, Status:t.status }));
+  else if(kind==='assignments') rows = d.allTasks.filter(t=>t.assigned_to).map(t=>({ Employee: employeeNameById(t.assigned_to), Module:t.module, Project:t.projName, Task:t.task, Status:t.status }));
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(rows), kind);
+  XLSX.writeFile(wb, `Office_${kind}_${todayISO()}.xlsx`);
+}
+
+/* ===================== EMPLOYEES (profile, time-clock, requests) ===================== */
+async function loadEmployeesData(){
+  const [e,l,w,a] = await Promise.all([
+    sb.from("sl_employees").select("*, sl_users(name,username,role,designation)").order("created_at"),
+    sb.from("sl_leave_requests").select("*").order("date",{ascending:false}),
+    sb.from("sl_workhour_requests").select("*").order("submitted_at",{ascending:false}),
+    sb.from("sl_attendance").select("*").order("date",{ascending:false}).limit(300),
+  ]);
+  empCache = { employees:e.data||[], leaves:l.data||[], workhour:w.data||[], attendance:a.data||[] };
+}
+function myEmployeeRow(){ return empCache.employees.find(e=>e.user_id===session.id) || null; }
+function statusPill(s){ return `<span class="pill ${s==='approved'||s==='present'?'pill-approved':s==='rejected'||s==='half_day_unpaid'||s==='absent'?'pill-delayed':'pill-progress'}">${s}</span>`; }
+
+async function renderEmployees(main, fab){
+  fab.classList.add("hidden");
+  main.innerHTML = `<div class="loadWrap"><span class="spin"></span> Loading…</div>`;
+  await loadEmployeesData();
+  if(isAdmin()) renderEmployeesAdmin(main, fab); else await renderEmployeesSelf(main, fab);
+}
+function renderEmployeesAdmin(main, fab){
+  const pendingShift = empCache.workhour.filter(w=>w.status==='pending');
+  const pendingLeave = empCache.leaves.filter(l=>l.status==='pending');
+  main.innerHTML = `
+    <div class="sectionHead"><h2>Employees</h2></div>
+    ${(pendingShift.length||pendingLeave.length) ? `
+    <div class="card" style="margin-bottom:12px;">
+      <div class="sectionHead"><h2>Pending Approvals</h2></div>
+      ${pendingShift.map(w=>{ const e=empCache.employees.find(x=>x.id===w.employee_id); return `<div class="userRow"><div><div class="nm">${e?.sl_users?.name||'-'} — shift to ${w.requested_shift}</div><div class="meta">from week of ${w.requested_week}</div></div><div class="toolbar"><button onclick="reviewWorkhour('${w.id}','approved')">Approve</button><button onclick="reviewWorkhour('${w.id}','rejected')">Reject</button></div></div>`; }).join("")}
+      ${pendingLeave.map(l=>{ const e=empCache.employees.find(x=>x.id===l.employee_id); return `<div class="userRow"><div><div class="nm">${e?.sl_users?.name||'-'} — ${l.type} leave, ${l.date}</div></div><div class="toolbar"><button onclick="reviewLeave('${l.id}','approved')">Approve</button><button onclick="reviewLeave('${l.id}','rejected')">Reject</button></div></div>`; }).join("")}
+    </div>` : ''}
+    <div class="card">
+      ${empCache.employees.map(e=>`
+        <div class="userRow" style="cursor:pointer" onclick="openEmployeeModal('${e.id}')">
+          <div><div class="nm">${e.sl_users?.name||'-'} <span style="color:var(--muted); font-weight:400;">@${e.sl_users?.username||''}</span></div>
+          <div class="meta">${e.sl_users?.designation||'-'} · Shift ${e.work_hour_shift}</div></div>
+          <div style="color:var(--muted)">›</div>
+        </div>`).join("") || '<div class="empty">No employees yet.</div>'}
+    </div>
+  `;
+}
+async function loadEmployeeSchedule(employeeId){
+  const [pTasks, iTasks, pMeet, iMeet] = await Promise.all([
+    sb.from("sl_project_tasks").select("*, sl_projects(name)").eq("assigned_to", employeeId),
+    sb.from("sl_interior_tasks").select("*, sl_interior_projects(name)").eq("assigned_to", employeeId),
+    sb.from("sl_project_tasks").select("project_id").eq("assigned_to", employeeId).eq("task","Clients Meeting Update"),
+    sb.from("sl_interior_tasks").select("project_id").eq("assigned_to", employeeId).eq("task","Clients Meeting Update"),
+  ]);
+  const scheduleTasks = [
+    ...(pTasks.data||[]).map(t=>({...t, projName:t.sl_projects?.name, module:'Projects'})),
+    ...(iTasks.data||[]).map(t=>({...t, projName:t.sl_interior_projects?.name, module:'Interior'})),
+  ].sort((a,b)=>(a.plan_start||'9999').localeCompare(b.plan_start||'9999'));
+  const meetingProjectIds = [...new Set([...(pMeet.data||[]).map(r=>r.project_id), ...(iMeet.data||[]).map(r=>r.project_id)])];
+  let meetings = [];
+  if(meetingProjectIds.length){
+    const { data } = await sb.from("sl_meetings").select("*").in("project_id", meetingProjectIds).order("date",{ascending:false}).limit(10);
+    meetings = data || [];
+  }
+  return { scheduleTasks, meetings };
+}
+function renderScheduleAndMeetingsHtml(scheduleTasks, meetings){
+  const todayStr = todayISO();
+  return `
+    <div class="sectionHead"><h2>My Schedule (all projects)</h2></div>
+    <div class="tableWrap"><table>
+      <thead><tr><th>Module</th><th>Project</th><th>Task</th><th>Deadline</th><th>Status</th></tr></thead>
+      <tbody>${scheduleTasks.length ? scheduleTasks.map(t=>`<tr>
+        <td>${t.module}</td><td>${t.projName||'-'}</td><td>${t.task||''}</td>
+        <td style="color:${t.deadline && t.deadline<todayStr && !['Done','Approved'].includes(t.status) ? 'var(--red)':'var(--muted)'}">${t.deadline||'-'}</td>
+        <td>${t.status}</td>
+      </tr>`).join("") : `<tr><td colspan="5" style="color:var(--muted);">No assignments yet.</td></tr>`}</tbody>
+    </table></div>
+    <div style="font-size:12px; font-weight:600; margin:14px 0 6px;">Meeting involvement</div>
+    ${meetings.length ? meetings.map(m=>`<div class="userRow"><div><div class="nm">${m.date} ${m.time||''}</div><div class="meta">${m.location||'-'}${m.next_meeting_date?` · next: ${m.next_meeting_date} ${m.next_meeting_time||''}`:''}</div></div></div>`).join("") : '<div class="empty">No meetings logged yet.</div>'}
+  `;
+}
+/* ===================== PERFORMANCE REPORT / MISSED RECORDS / CALENDAR ===================== */
+async function loadPerformanceData(employeeId){
+  const monthStart = todayISO().slice(0,7)+'-01';
+  const [attRes, pTasksRes, iTasksRes] = await Promise.all([
+    sb.from("sl_attendance").select("*").eq("employee_id", employeeId).gte("date", monthStart),
+    sb.from("sl_project_tasks").select("*, sl_projects(name)").eq("assigned_to", employeeId),
+    sb.from("sl_interior_tasks").select("*, sl_interior_projects(name)").eq("assigned_to", employeeId),
+  ]);
+  const att = attRes.data || [];
+  const allTasks = [...(pTasksRes.data||[]).map(t=>({...t,projName:t.sl_projects?.name})), ...(iTasksRes.data||[]).map(t=>({...t,projName:t.sl_interior_projects?.name}))];
+  const present = att.filter(a=>a.status==='present').length;
+  const absent = att.filter(a=>a.status==='absent').length;
+  const late = att.filter(a=>Number(a.late_minutes||0) > 15).length;
+  const halfDayUnpaid = att.filter(a=>a.status==='half_day_unpaid').length;
+  const totalOvertime = att.reduce((s,a)=>s+Number(a.overtime_minutes||0),0);
+  const netBalanceMinutes = totalOvertime - (halfDayUnpaid*240);
+  const completed = allTasks.filter(t=>['Done','Approved'].includes(t.status)).length;
+  const overdue = allTasks.filter(t=>t.deadline && t.deadline<todayISO() && !['Done','Approved'].includes(t.status));
+  const missedAttendance = att.filter(a=>a.status==='absent' || a.status==='half_day_unpaid');
+  return { att, allTasks, present, absent, late, halfDayUnpaid, totalOvertime, netBalanceMinutes, completed, overdue, missedAttendance };
+}
+function renderPerformanceHtml(perf){
+  const hrs = m => (m/60).toFixed(1);
+  return `
+    <div class="sectionHead"><h2>Performance — this month</h2><div class="toolbar"><button onclick="exportPerformance()">⬇ Excel</button><button onclick="window.print()">🖨 PDF</button></div></div>
+    <div class="grid4" style="margin-bottom:10px;">
+      <div class="card stat"><div class="lab">Present</div><div class="val">${perf.present}</div></div>
+      <div class="card stat"><div class="lab">Absent</div><div class="val">${perf.absent}</div></div>
+      <div class="card stat"><div class="lab">Late Days</div><div class="val">${perf.late}</div></div>
+      <div class="card stat"><div class="lab">Tasks Done</div><div class="val">${perf.completed}</div></div>
+    </div>
+    <div class="userRow"><div class="nm">Net Overtime Balance</div><div style="font-weight:700; color:${perf.netBalanceMinutes>=0?'var(--green)':'var(--red)'}">${hrs(perf.netBalanceMinutes)} hrs</div></div>
+    <div class="userRow"><div class="nm">Half-day unpaid (auto, late/notice penalty)</div><div>${perf.halfDayUnpaid}</div></div>
+  `;
+}
+function renderMissedRecordsHtml(perf){
+  return `
+    <div class="sectionHead"><h2>Missed Records & Alerts</h2></div>
+    ${perf.overdue.map(t=>`<div class="userRow"><div class="nm">${t.task} <span class="meta">(${t.projName||'-'})</span></div><span class="pill pill-delayed">Overdue ${t.deadline}</span></div>`).join("")}
+    ${perf.missedAttendance.map(a=>`<div class="userRow"><div class="nm">${a.date}</div><span class="pill pill-delayed">${a.status}</span></div>`).join("")}
+    ${(perf.overdue.length+perf.missedAttendance.length)===0 ? '<div class="empty">No missed records this month.</div>' : ''}
+  `;
+}
+function renderMiniCalendar(tasks){
+  const byDate = {};
+  tasks.forEach(t=>{ if(t.deadline){ byDate[t.deadline]=byDate[t.deadline]||[]; byDate[t.deadline].push(t); } });
+  const days = []; const start = new Date();
+  for(let i=0;i<30;i++){ const d=new Date(start); d.setDate(d.getDate()+i); days.push(d.toISOString().slice(0,10)); }
+  return `
+    <div class="sectionHead"><h2>Next 30 Days</h2></div>
+    <div style="display:grid; grid-template-columns:repeat(7,1fr); gap:4px; font-size:10px;">
+      ${days.map(d=>{
+        const items = byDate[d]||[];
+        const dayNum = new Date(d+"T00:00:00").getDate();
+        return `<div style="border:1px solid var(--line); border-radius:6px; padding:4px; min-height:44px; background:${items.length?'#fdf3e3':'#fff'};">
+          <div style="font-weight:700;">${dayNum}</div>
+          ${items.slice(0,2).map(t=>`<div style="font-size:8.5px; color:var(--gold); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${t.task}</div>`).join("")}
+        </div>`;
+      }).join("")}
+    </div>
+  `;
+}
+function exportPerformance(){
+  const d = window._perfExportData; if(!d) return;
+  const { perf, name } = d;
+  const wb = XLSX.utils.book_new();
+  const summary = [{ Present:perf.present, Absent:perf.absent, "Late Days":perf.late, "Tasks Done":perf.completed, "Net Overtime (hrs)":(perf.netBalanceMinutes/60).toFixed(1), "Half-day Unpaid":perf.halfDayUnpaid }];
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(summary), "Summary");
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(perf.allTasks.map(t=>({Project:t.projName,Task:t.task,Deadline:t.deadline,Status:t.status}))), "Tasks");
+  XLSX.writeFile(wb, `Performance_${name.replace(/\s+/g,'_')}_${todayISO().slice(0,7)}.xlsx`);
+}
+
+
+async function renderEmployeesSelf(main, fab){
+  const me = myEmployeeRow();
+  if(!me){ main.innerHTML = `<div class="card"><div class="empty">Your employee profile hasn't been set up yet.</div></div>`; return; }
+  const myLeaves = empCache.leaves.filter(l=>l.employee_id===me.id);
+  const myAtt = empCache.attendance.filter(a=>a.employee_id===me.id).slice(0,30);
+  const myReqs = empCache.workhour.filter(w=>w.employee_id===me.id);
+  const pendingReq = myReqs.find(w=>w.status==='pending');
+  const todayAtt = myAtt.find(a=>a.date===todayISO());
+  const isCheckedIn = todayAtt && todayAtt.check_in && !todayAtt.check_out;
+  const isDone = todayAtt && todayAtt.check_out;
+  const { scheduleTasks, meetings } = await loadEmployeeSchedule(me.id);
+  const perf = await loadPerformanceData(me.id);
+  window._perfExportData = { perf, name: me.sl_users?.name || session.name };
+  main.innerHTML = `
+    <div class="sectionHead"><h2>My Profile</h2></div>
+    <div class="card" style="margin-bottom:12px;">
+      <div style="font-size:14px; font-weight:600;">${me.sl_users?.designation||'Employee'}</div>
+      <div style="font-size:12px; color:var(--muted); margin-top:2px;">Shift: ${me.work_hour_shift} · Leave balance: ${me.leave_balance_days} days</div>
+    </div>
+    <div class="card" style="margin-bottom:12px;">
+      <div class="sectionHead"><h2>Time Clock</h2></div>
+      ${isDone ? `<div class="empty">Checked out today at ${new Date(todayAtt.check_out).toLocaleTimeString()}. See you tomorrow.</div>`
+        : isCheckedIn ? `<button class="clockBtn out" onclick="doCheckOut('${me.id}')">⏻ Check Out</button><div class="foot">Checked in at ${new Date(todayAtt.check_in).toLocaleTimeString()}</div>`
+        : `<button class="clockBtn in" onclick="doCheckIn('${me.id}')">▶ Check In</button>`}
+    </div>
+    <div class="card" style="margin-bottom:12px;">
+      <div class="toolbar">
+        <button ${pendingReq?'disabled':''} onclick="openShiftRequestModal()">Request Shift Change</button>
+        <button onclick="openLeaveRequestModal()">Request Leave</button>
+      </div>
+      ${pendingReq ? `<div class="banner" style="background:#fdf3e3;border-color:#f0d9a8;color:#a3620a;">Pending: switch to ${pendingReq.requested_shift} from week of ${pendingReq.requested_week}</div>` : ''}
+    </div>
+    <div class="card" style="margin-bottom:12px;">${renderPerformanceHtml(perf)}</div>
+    <div class="card" style="margin-bottom:12px;">${renderMissedRecordsHtml(perf)}</div>
+    <div class="card" style="margin-bottom:12px;">${renderMiniCalendar(scheduleTasks)}</div>
+    <div class="card" style="margin-bottom:12px;">${renderScheduleAndMeetingsHtml(scheduleTasks, meetings)}</div>
+    <div class="card" style="margin-bottom:12px;">
+      <div class="sectionHead"><h2>My Leave Requests</h2></div>
+      ${myLeaves.length ? myLeaves.map(l=>`<div class="userRow"><div><div class="nm">${l.date} · ${l.type}</div><div class="meta">${l.reason||''}</div></div>${statusPill(l.status)}</div>`).join("") : '<div class="empty">No leave requests yet.</div>'}
+    </div>
+    <div class="card">
+      <div class="sectionHead"><h2>My Recent Attendance</h2></div>
+      ${myAtt.length ? myAtt.map(a=>`<div class="userRow"><div class="nm">${a.date}</div>${statusPill(a.status)}</div>`).join("") : '<div class="empty">No attendance logged yet.</div>'}
+    </div>
+  `;
+}
+async function doCheckIn(empId){
+  const { error } = await sb.rpc("sl_check_in", { p_employee_id: empId });
+  if(error){ alert("Couldn't check in: "+error.message); return; }
+  await renderEmployees(document.getElementById(officeScreenVisible()?"officeMain":"main"), document.getElementById(officeScreenVisible()?"officeFab":"fabBtn"));
+}
+async function doCheckOut(empId){
+  const { error } = await sb.rpc("sl_check_out", { p_employee_id: empId });
+  if(error){ alert("Couldn't check out: "+error.message); return; }
+  await renderEmployees(document.getElementById(officeScreenVisible()?"officeMain":"main"), document.getElementById(officeScreenVisible()?"officeFab":"fabBtn"));
+}
+function officeScreenVisible(){ return !document.getElementById("officeScreen").classList.contains("hidden"); }
+async function openEmployeeModal(empId){
+  const e = empCache.employees.find(x=>x.id===empId); if(!e) return;
+  document.getElementById("modalRoot").innerHTML = `<div class="modalOverlay"><div class="modal"><div class="loadWrap"><span class="spin"></span> Loading…</div></div></div>`;
+  const myLeaves = empCache.leaves.filter(l=>l.employee_id===empId);
+  const myAtt = empCache.attendance.filter(a=>a.employee_id===empId).slice(0,30);
+  const { scheduleTasks, meetings } = await loadEmployeeSchedule(empId);
+  const perf = await loadPerformanceData(empId);
+  window._perfExportData = { perf, name: e.sl_users?.name || 'Employee' };
+  document.getElementById("modalRoot").innerHTML = `
+  <div class="modalOverlay" onclick="if(event.target===this) closeModal()">
+    <div class="modal">
+      <div class="modalHead"><h3>${e.sl_users?.name||'-'}</h3><button class="iconbtn" onclick="closeModal()">✕</button></div>
+      <div style="font-size:12px; color:var(--muted); margin-bottom:10px;">@${e.sl_users?.username||''}</div>
+      ${isAdmin() ? `
+      <div class="field"><label>Designation</label><input id="ed_desig" value="${e.sl_users?.designation||''}"></div>
+      <div class="field"><label>Shift</label>
+        <select id="ed_shift">
+          <option value="10-6" ${e.work_hour_shift==='10-6'?'selected':''}>10:00 AM – 6:00 PM</option>
+          <option value="2-10" ${e.work_hour_shift==='2-10'?'selected':''}>2:00 PM – 10:00 PM</option>
+        </select>
+      </div>
+      <div class="btnRow" style="margin-top:0; margin-bottom:14px;"><button class="btn btn-sm" onclick="saveEmployeeProfile('${e.id}','${e.user_id}')">Save changes</button></div>
+      ` : `<div style="font-size:12px; color:var(--muted); margin-bottom:10px;">${e.sl_users?.designation||'-'} · Shift ${e.work_hour_shift}</div>`}
+      ${renderPerformanceHtml(perf)}
+      <div style="margin:14px 0;">${renderMissedRecordsHtml(perf)}</div>
+      ${renderScheduleAndMeetingsHtml(scheduleTasks, meetings)}
+      <div style="font-size:12px; font-weight:600; margin:12px 0 6px;">Recent attendance</div>
+      ${myAtt.length ? myAtt.map(a=>`<div class="userRow"><div class="nm">${a.date}</div>${statusPill(a.status)}</div>`).join("") : '<div class="empty">No attendance logged yet.</div>'}
+      <div style="font-size:12px; font-weight:600; margin:12px 0 6px;">Leave history</div>
+      ${myLeaves.length ? myLeaves.map(l=>`<div class="userRow"><div><div class="nm">${l.date} · ${l.type}</div></div>${statusPill(l.status)}</div>`).join("") : '<div class="empty">No leave requests.</div>'}
+      <div class="btnRow"><button class="btn-ghost btn" onclick="closeModal()">Close</button></div>
+    </div>
+  </div>`;
+}
+async function saveEmployeeProfile(empId, userId){
+  const designation = document.getElementById("ed_desig").value.trim();
+  const work_hour_shift = document.getElementById("ed_shift").value;
+  // Both are plain table updates — no Edge Function needed, RLS already lets admins write these.
+  await sb.from("sl_users").update({ designation }).eq("id", userId);
+  await sb.from("sl_employees").update({ work_hour_shift, effective_from: todayISO() }).eq("id", empId);
+  closeModal(); await loadEmployeesData(); renderOfficeTab();
+}
+async function reviewWorkhour(id, status){ await sb.from("sl_workhour_requests").update({status, reviewed_by:session.id}).eq("id",id); await loadEmployeesData(); renderOfficeTab(); }
+async function reviewLeave(id, status){ await sb.from("sl_leave_requests").update({status}).eq("id",id); await loadEmployeesData(); renderOfficeTab(); }
+function openShiftRequestModal(){
+  const me = myEmployeeRow();
+  document.getElementById("modalRoot").innerHTML = `
+  <div class="modalOverlay" onclick="if(event.target===this) closeModal()">
+    <div class="modal">
+      <div class="modalHead"><h3>Request Shift Change</h3><button class="iconbtn" onclick="closeModal()">✕</button></div>
+      <div class="field"><label>New shift</label><select id="sr_shift">
+        <option value="10-6" ${me.work_hour_shift==='10-6'?'disabled':''}>10:00 AM – 6:00 PM</option>
+        <option value="2-10" ${me.work_hour_shift==='2-10'?'disabled':''}>2:00 PM – 10:00 PM</option>
+      </select></div>
+      <div class="field"><label>Target week</label><input id="sr_week" type="date" value="${todayISO()}"></div>
+      <div class="foot" style="text-align:left;">Must be submitted by Tuesday of the week before. Allowed once a month.</div>
+      <div class="btnRow"><button class="btn-ghost btn" onclick="closeModal()">Cancel</button><button class="btn" onclick="submitShiftRequest()">Submit</button></div>
+    </div>
+  </div>`;
+}
+async function submitShiftRequest(){
+  const me = myEmployeeRow();
+  const { error } = await sb.from("sl_workhour_requests").insert({ id:uid(), employee_id:me.id, requested_shift:document.getElementById("sr_shift").value, requested_week:document.getElementById("sr_week").value });
+  if(error){ alert("Couldn't submit: "+error.message); return; }
+  closeModal(); await loadEmployeesData(); renderOfficeTab();
+}
+function openLeaveRequestModal(){
+  document.getElementById("modalRoot").innerHTML = `
+  <div class="modalOverlay" onclick="if(event.target===this) closeModal()">
+    <div class="modal">
+      <div class="modalHead"><h3>Request Leave</h3><button class="iconbtn" onclick="closeModal()">✕</button></div>
+      <div class="row2">
+        <div class="field"><label>Date</label><input id="lr_date" type="date" value="${todayISO()}"></div>
+        <div class="field"><label>Type</label><select id="lr_type"><option value="casual">Casual</option><option value="sick">Sick</option><option value="other">Other</option></select></div>
+      </div>
+      <div class="field"><label>Reason</label><input id="lr_reason"></div>
+      <div class="foot" style="text-align:left;">Submitting counts as notification. Sick leave notified less than 1 hour before shift start is auto half-day unpaid.</div>
+      <div class="btnRow"><button class="btn-ghost btn" onclick="closeModal()">Cancel</button><button class="btn" onclick="submitLeaveRequest()">Submit</button></div>
+    </div>
+  </div>`;
+}
+async function submitLeaveRequest(){
+  const me = myEmployeeRow();
+  const { error } = await sb.from("sl_leave_requests").insert({ id:uid(), employee_id:me.id, date:document.getElementById("lr_date").value, type:document.getElementById("lr_type").value, reason:document.getElementById("lr_reason").value.trim(), notified_at:new Date().toISOString() });
+  if(error){ alert("Couldn't submit: "+error.message); return; }
+  closeModal(); await loadEmployeesData(); renderOfficeTab();
+}
+
+/* ===================== TEAM ACCESS ===================== */
+async function renderTeamAccess(main, fab){
+  main.innerHTML = `<div class="loadWrap"><span class="spin"></span> Loading…</div>`;
+  const { data } = await sb.from("sl_users").select("*").order("created_at");
+  main.innerHTML = `
+    <div class="sectionHead"><h2>Team Access</h2></div>
+    <div class="card">
+      ${(data||[]).map(u=>`
+        <div class="userRow">
+          <div><div class="nm">${u.name} <span style="color:var(--muted); font-weight:400;">@${u.username}</span></div>
+          <div class="meta">${u.designation||'-'} · <span class="${u.role!=='employee'?'badge-admin':''}">${u.role}</span></div></div>
+          ${isAdmin() && u.username!=='admin' ? `<button class="delBtn" onclick="removeUser('${u.id}')">✕</button>` : ''}
+        </div>`).join("") || '<div class="empty">No users.</div>'}
+    </div>
+  `;
+  fab.classList.remove("hidden");
+  document.getElementById("officeFabLabel").textContent = "Add Team Member";
+  fab.onclick = ()=>openUserModal();
+}
+function openUserModal(){
+  document.getElementById("modalRoot").innerHTML = `
+  <div class="modalOverlay" onclick="if(event.target===this) closeModal()">
+    <div class="modal">
+      <div class="modalHead"><h3>Add Team Member</h3><button class="iconbtn" onclick="closeModal()">✕</button></div>
+      <div class="field"><label>Full name</label><input id="u_name"></div>
+      <div class="field"><label>Username</label><input id="u_username"></div>
+      <div class="field"><label>Temporary password</label><input id="u_password" type="text"></div>
+      <div class="field"><label>Designation</label><input id="u_desig" placeholder="e.g. Site Executive"></div>
+      <div class="field"><label>Role</label>
+        <select id="u_role">
+          <option value="employee" selected>Employee</option>
+          <option value="admin">Admin</option>
+          ${isSuperAdmin() ? '<option value="super_admin">Super Admin</option>' : ''}
+        </select>
+      </div>
+      ${!isSuperAdmin() ? '<div class="foot" style="text-align:left;">Only a Super Admin can create Admin/Super Admin accounts.</div>' : ''}
+      <div class="btnRow"><button class="btn-ghost btn" onclick="closeModal()">Cancel</button><button class="btn" onclick="saveUser()">Add Team Member</button></div>
+    </div>
+  </div>`;
+}
+async function saveUser(){
+  const name = document.getElementById("u_name").value.trim();
+  const username = document.getElementById("u_username").value.trim();
+  const password = document.getElementById("u_password").value;
+  const designation = document.getElementById("u_desig").value.trim();
+  const role = document.getElementById("u_role").value;
+  if(!name || !username || !password){ alert("Name, username and password are required."); return; }
+  const { data, error } = await sb.functions.invoke("admin-manage-users", { body: { action:"create", username, password, name, role, designation } });
+  if(error || (data && data.error)){ alert((data?.error) || error.message); return; }
+  closeModal(); renderOfficeTab();
+}
+async function removeUser(id){
+  if(!confirm("Remove this team member's access?")) return;
+  const { data, error } = await sb.functions.invoke("admin-manage-users", { body: { action:"delete", id } });
+  if(error || (data && data.error)){ alert((data?.error) || error.message); return; }
+  renderOfficeTab();
+}
+
+boot().catch(e => showFatalError(e?.message || String(e)));
+</script>
 </body>
 </html>
+
