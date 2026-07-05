@@ -391,7 +391,10 @@ async function renderProjectList(main, fab, module){
     wrap.innerHTML = data.map(p=>`
       <div class="projItem" onclick='openProject(${JSON.stringify(p).replace(/'/g,"&apos;")}, "${module}")'>
         <div><div class="nm">${p.name}</div><div class="meta">${p.client_name?p.client_name+' · ':''}Started ${p.start_date}</div></div>
-        <div style="color:var(--muted)">›</div>
+        <div style="display:flex; align-items:center; gap:6px;">
+          ${isAdmin() ? `<button class="delBtn" title="Edit" onclick='event.stopPropagation(); openEditProjectModal(${JSON.stringify(p).replace(/'/g,"&apos;")}, "${module}")'>✎</button><button class="delBtn" title="Delete" onclick="event.stopPropagation(); deleteProjectFully('${p.id}','${module}','${p.name.replace(/'/g,"&apos;")}')">✕</button>` : ''}
+          <div style="color:var(--muted)">›</div>
+        </div>
       </div>`).join("");
   }
   if(isAdmin()){
@@ -421,6 +424,44 @@ async function createProject(module){
   const { error } = await sb.from(table).insert({ id: uid(), name, client_name, start_date });
   if(error){ alert("Couldn't create: " + error.message); return; }
   closeModal(); renderOfficeTab();
+}
+function openEditProjectModal(p, module){
+  document.getElementById("modalRoot").innerHTML = `
+  <div class="modalOverlay" onclick="if(event.target===this) closeModal()">
+    <div class="modal">
+      <div class="modalHead"><h3>Edit ${module==='projects'?'Project':'Interior Project'}</h3><button class="iconbtn" onclick="closeModal()">✕</button></div>
+      <div class="field"><label>Project name</label><input id="ep_name" value="${(p.name||'').replace(/"/g,'&quot;')}"></div>
+      <div class="field"><label>Client name</label><input id="ep_client" value="${(p.client_name||'').replace(/"/g,'&quot;')}"></div>
+      <div class="field"><label>Start date</label><input id="ep_start" type="date" value="${p.start_date||todayISO()}"></div>
+      <div class="btnRow"><button class="btn-ghost btn" onclick="closeModal()">Cancel</button><button class="btn" onclick="saveEditedProject('${p.id}','${module}')">Save changes</button></div>
+    </div>
+  </div>`;
+}
+async function saveEditedProject(id, module){
+  const name = document.getElementById("ep_name").value.trim();
+  const client_name = document.getElementById("ep_client").value.trim();
+  const start_date = document.getElementById("ep_start").value;
+  if(!name){ alert("Project name is required."); return; }
+  const table = module==="projects" ? "sl_projects" : "sl_interior_projects";
+  const { error } = await sb.from(table).update({ name, client_name, start_date }).eq("id", id);
+  if(error){ alert("Couldn't save: " + error.message); return; }
+  closeModal(); renderOfficeTab();
+}
+async function deleteProjectFully(id, module, name){
+  if(!confirm(`Delete "${name}" and all its tasks, costs, and meetings? This cannot be undone.`)) return;
+  const { data: relatedTasks } = await sb.from("sl_project_tasks").select("id").eq("project_id", id);
+  const taskIds = (relatedTasks||[]).map(t=>t.id);
+  if(taskIds.length){
+    await sb.from("sl_work_costs").delete().in("task_id", taskIds);
+    await sb.from("sl_task_comments").delete().in("task_id", taskIds);
+    await sb.from("sl_task_history").delete().in("task_id", taskIds);
+  }
+  await sb.from("sl_project_tasks").delete().eq("project_id", id);
+  await sb.from("sl_meetings").delete().eq("project_id", id);
+  const table = module==="projects" ? "sl_projects" : "sl_interior_projects";
+  const { error } = await sb.from(table).delete().eq("id", id);
+  if(error){ alert("Couldn't delete: " + error.message); return; }
+  renderOfficeTab();
 }
 async function openProject(p, module){
   currentProject = p; currentModule = module;
@@ -620,7 +661,7 @@ function renderConstruction(main, fab){
     </div>`).join("")}
     ${tasks.length===0 ? '<div class="card"><div class="empty">No construction tasks yet. Tap + to add one.</div></div>' : ''}
   `;
-  if(isAdmin()){
+  if(canEdit()){
     fab.classList.remove("hidden");
     document.getElementById("fabLabel").textContent = "Add Task";
     fab.onclick = ()=>openAddTaskModal();
@@ -940,8 +981,8 @@ async function confirmImportTasks(skipConflicts){
   alert(`Imported ${toInsert.length} task(s).`);
 }
 
-function taskTable(){ return currentModule==="projects" ? "sl_project_tasks" : "sl_interior_tasks"; }
-function historyTable(){ return currentModule==="projects" ? "sl_task_history" : "sl_interior_task_history"; }
+function taskTable(){ return "sl_project_tasks"; } // both Projects and Interior share this one table (project_id points to either sl_projects or sl_interior_projects)
+function historyTable(){ return "sl_task_history"; } // shared history table for both modules
 function commentsTable(){ return "sl_task_comments"; } // comments only modeled for Module A tasks; interior uses inline notes in v1
 
 let myEmployeeId; // undefined = not fetched, null = no employee profile, string = the id
@@ -1026,8 +1067,8 @@ async function renderOfficeDashboard(main, fab){
   await loadDirectory();
   const todayStr = todayISO();
   const calls = [
-    sb.from("sl_project_tasks").select("*, sl_projects(name)"),
-    sb.from("sl_interior_tasks").select("*, sl_interior_projects(name)"),
+    sb.from("sl_project_tasks").select("*, sl_projects!inner(name)"),
+    sb.from("sl_project_tasks").select("*, sl_interior_projects!inner(name)"),
     sb.from("sl_projects").select("*"), sb.from("sl_interior_projects").select("*"),
     sb.from("sl_meetings").select("*").not("next_meeting_date","is",null).order("next_meeting_date"),
   ];
@@ -1141,7 +1182,7 @@ async function renderOfficeDashboard(main, fab){
   window._dashExportData = { attendance:{emp,att}, allTasks, projects };
 }
 function openReassignModal({id, module, name}){
-  const table = module==='Projects' ? 'sl_project_tasks' : 'sl_interior_tasks';
+  const table = 'sl_project_tasks';
   document.getElementById("modalRoot").innerHTML = `
   <div class="modalOverlay" onclick="if(event.target===this) closeModal()">
     <div class="modal">
@@ -1222,10 +1263,10 @@ function renderEmployeesAdmin(main, fab){
 }
 async function loadEmployeeSchedule(employeeId){
   const [pTasks, iTasks, pMeet, iMeet] = await Promise.all([
-    sb.from("sl_project_tasks").select("*, sl_projects(name)").eq("assigned_to", employeeId),
-    sb.from("sl_interior_tasks").select("*, sl_interior_projects(name)").eq("assigned_to", employeeId),
+    sb.from("sl_project_tasks").select("*, sl_projects!inner(name)").eq("assigned_to", employeeId),
+    sb.from("sl_project_tasks").select("*, sl_interior_projects!inner(name)").eq("assigned_to", employeeId),
     sb.from("sl_project_tasks").select("project_id").eq("assigned_to", employeeId).eq("task","Clients Meeting Update"),
-    sb.from("sl_interior_tasks").select("project_id").eq("assigned_to", employeeId).eq("task","Clients Meeting Update"),
+    sb.from("sl_project_tasks").select("project_id").eq("assigned_to", employeeId).eq("task","Clients Meeting Update"),
   ]);
   const scheduleTasks = [
     ...(pTasks.data||[]).map(t=>({...t, projName:t.sl_projects?.name, module:'Projects'})),
@@ -1260,8 +1301,8 @@ async function loadPerformanceData(employeeId){
   const monthStart = todayISO().slice(0,7)+'-01';
   const [attRes, pTasksRes, iTasksRes] = await Promise.all([
     sb.from("sl_attendance").select("*").eq("employee_id", employeeId).gte("date", monthStart),
-    sb.from("sl_project_tasks").select("*, sl_projects(name)").eq("assigned_to", employeeId),
-    sb.from("sl_interior_tasks").select("*, sl_interior_projects(name)").eq("assigned_to", employeeId),
+    sb.from("sl_project_tasks").select("*, sl_projects!inner(name)").eq("assigned_to", employeeId),
+    sb.from("sl_project_tasks").select("*, sl_interior_projects!inner(name)").eq("assigned_to", employeeId),
   ]);
   const att = attRes.data || [];
   const allTasks = [...(pTasksRes.data||[]).map(t=>({...t,projName:t.sl_projects?.name})), ...(iTasksRes.data||[]).map(t=>({...t,projName:t.sl_interior_projects?.name}))];
@@ -1406,7 +1447,10 @@ async function openEmployeeModal(empId){
           <option value="2-10" ${e.work_hour_shift==='2-10'?'selected':''}>2:00 PM – 10:00 PM</option>
         </select>
       </div>
-      <div class="btnRow" style="margin-top:0; margin-bottom:14px;"><button class="btn btn-sm" onclick="saveEmployeeProfile('${e.id}','${e.user_id}')">Save changes</button></div>
+      <div class="btnRow" style="margin-top:0; margin-bottom:14px;">
+        <button class="btn btn-sm" onclick="saveEmployeeProfile('${e.id}','${e.user_id}')">Save changes</button>
+        ${e.sl_users?.username!=='admin' ? `<button class="btn-ghost btn btn-sm" style="color:var(--red);" onclick="removeEmployee('${e.id}','${e.user_id}')">Delete Employee</button>` : ''}
+      </div>
       ` : `<div style="font-size:12px; color:var(--muted); margin-bottom:10px;">${e.sl_users?.designation||'-'} · Shift ${e.work_hour_shift}</div>`}
       ${renderPerformanceHtml(perf)}
       <div style="margin:14px 0;">${renderMissedRecordsHtml(perf)}</div>
@@ -1425,6 +1469,14 @@ async function saveEmployeeProfile(empId, userId){
   // Both are plain table updates — no Edge Function needed, RLS already lets admins write these.
   await sb.from("sl_users").update({ designation }).eq("id", userId);
   await sb.from("sl_employees").update({ work_hour_shift, effective_from: todayISO() }).eq("id", empId);
+  closeModal(); await loadEmployeesData(); renderOfficeTab();
+}
+async function removeEmployee(empId, userId){
+  if(!confirm("Delete this employee's profile and login access permanently? This cannot be undone.")) return;
+  await sb.from("sl_employees").delete().eq("id", empId);
+  const { data:{ session: authSession } } = await sb.auth.getSession();
+  const { data, error } = await sb.functions.invoke("admin-manage-users", { body: { action:"delete", id:userId }, headers: { Authorization: `Bearer ${authSession.access_token}` } });
+  if(error || (data && data.error)){ alert((data?.error) || error.message); return; }
   closeModal(); await loadEmployeesData(); renderOfficeTab();
 }
 async function reviewWorkhour(id, status){ await sb.from("sl_workhour_requests").update({status, reviewed_by:session.id}).eq("id",id); await loadEmployeesData(); renderOfficeTab(); }
