@@ -524,6 +524,7 @@ function renderDesign(main, fab){
           </div>
           <div class="toolbar">
             ${isAdmin() ? `<button onclick="openAssignModal('${t.id}')">Assign</button>` : ""}
+            ${canEdit() ? `<button onclick="openFileLinkModal('${t.id}','${t.task.replace(/'/g,"&apos;")}')">📎 File Link</button>` : ""}
             <button onclick="openCommentsModal('${t.id}')">Comments</button>
             ${t.task==="Clients Meeting Update" ? `<button onclick="openMeetingLogModal('${t.id}')">Meeting Log</button>` : ""}
           </div>
@@ -531,6 +532,22 @@ function renderDesign(main, fab){
       ${items.length===0 ? '<div class="empty">Design checklist not set up yet for this project.</div>' : ''}
     </div>
   `;
+}
+function openFileLinkModal(taskId, taskName){
+  const t = cache.tasks.find(x=>x.id===taskId); if(!t) return;
+  document.getElementById("modalRoot").innerHTML = `
+  <div class="modalOverlay" onclick="if(event.target===this) closeModal()">
+    <div class="modal">
+      <div class="modalHead"><h3>File / Drawing Link · ${taskName}</h3><button class="iconbtn" onclick="closeModal()">✕</button></div>
+      <div class="field"><label>Link URL</label><input id="fl_link" value="${(t.file_link||'').replace(/"/g,'&quot;')}" placeholder="https://..."></div>
+      <div class="btnRow"><button class="btn-ghost btn" onclick="closeModal()">Cancel</button><button class="btn" onclick="saveFileLink('${taskId}')">Save</button></div>
+    </div>
+  </div>`;
+}
+async function saveFileLink(taskId){
+  const file_link = document.getElementById("fl_link").value.trim() || null;
+  await sb.from(taskTable()).update({ file_link }).eq("id", taskId);
+  closeModal(); await loadProjectData(); renderTab();
 }
 function openAssignModal(taskId){
   const t = cache.tasks.find(x=>x.id===taskId);
@@ -682,7 +699,8 @@ function renderConstruction(main, fab){
               <button class="delBtn" onclick="openWorkCostModal('${t.id}','${t.task.replace(/'/g,"&apos;")}')" title="Add cost entry">৳+</button>
               <button class="delBtn" onclick="openCommentsModal('${t.id}')" title="Comments">💬</button>
               <button class="delBtn" onclick="openHistoryModal('${t.id}')" title="Edit trail">🕘</button>
-              ${isAdmin()?`<button class="delBtn" onclick="openAssignModal('${t.id}')" title="Assign / file link / visibility">✎</button><button class="delBtn" onclick="removeTask('${t.id}')">✕</button>`:''}
+              ${canEdit()?`<button class="delBtn" onclick="openFileLinkModal('${t.id}','${t.task.replace(/'/g,"&apos;")}')" title="File / drawing link">📎</button>`:''}
+              ${isAdmin()?`<button class="delBtn" onclick="openAssignModal('${t.id}')" title="Assign / visibility">✎</button><button class="delBtn" onclick="removeTask('${t.id}')">✕</button>`:''}
             </td>
           </tr>`;}).join("")}
         </tbody>
@@ -718,7 +736,7 @@ function openWorkCostModal(taskId, taskName){
       <div class="field"><label>Amount</label><input id="wc_amount" type="number" value="0"></div>
       <div class="btnRow" style="margin-top:0;"><button class="btn-ghost btn" onclick="closeModal()">Cancel</button><button class="btn" onclick="saveWorkCost('${taskId}')">Add</button></div>
       <div style="font-size:12px; font-weight:600; margin:14px 0 6px;">Entries so far (adds up to Actual Cost)</div>
-      ${entries.length ? entries.map(c=>`<div class="userRow"><div><div class="nm">${catLabel[c.category]||c.category} — ৳${Number(c.amount).toLocaleString()}</div><div class="meta">${c.description||''} ${c.assigned_employee_id?'· '+employeeNameById(c.assigned_employee_id):''} · ${c.date}</div></div>${isAdmin()?`<button class="delBtn" title="Edit this entry" onclick="openEditCostModal('${c.id}','${taskId}','${taskName.replace(/'/g,"&apos;")}')">✎</button>`:''}</div>`).join("") : '<div class="empty">No cost entries yet — material and vendor bills can be added here as they come in.</div>'}
+      ${entries.length ? entries.map(c=>`<div class="userRow"><div><div class="nm">${catLabel[c.category]||c.category} — ৳${Number(c.amount).toLocaleString()}</div><div class="meta">${c.description||''} ${c.assigned_employee_id?'· '+employeeNameById(c.assigned_employee_id):''} · ${c.date}</div></div>${canEdit()?`<button class="delBtn" title="Edit this entry" onclick="openEditCostModal('${c.id}','${taskId}','${taskName.replace(/'/g,"&apos;")}')">✎</button>`:''}</div>`).join("") : '<div class="empty">No cost entries yet — material and vendor bills can be added here as they come in.</div>'}
     </div>
   </div>`;
 }
