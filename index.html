@@ -291,7 +291,8 @@ async function boot(){
     }
     session = profile;
     loadNotifications();
-    if(!notifPollStarted){ notifPollStarted = true; setInterval(loadNotifications, 5*60*1000); }
+    checkMeetingReminders();
+    if(!notifPollStarted){ notifPollStarted = true; setInterval(()=>{ loadNotifications(); checkMeetingReminders(); }, 5*60*1000); }
   }
   if(!currentProject){
     showOfficeScreen();
@@ -308,6 +309,34 @@ async function loadNotifications(){
   notifCache = data || [];
   updateNotifBadges();
 }
+function stripNotifRef(msg){ return (msg||'').replace(/\s*\[ref:[^\]]+\]$/,''); }
+const MEETING_REMINDER_CHECKPOINTS = [48, 36, 24, 12, 3]; // hours before meeting time
+async function checkMeetingReminders(){
+  const { data: meetings } = await sb.from("sl_meetings").select("*, sl_projects(name), sl_interior_projects(name)").not("next_meeting_date","is",null);
+  if(!meetings || !meetings.length) return;
+  const nowMs = Date.now();
+  let created = false;
+  for(const m of meetings){
+    const dt = new Date(`${m.next_meeting_date}T${m.next_meeting_time || "00:00"}:00`);
+    if(isNaN(dt.getTime())) continue;
+    const hoursUntil = (dt.getTime() - nowMs) / 3600000;
+    if(hoursUntil <= 0 || hoursUntil > 48) continue; // already passed, or further out than our earliest checkpoint
+    for(const cp of MEETING_REMINDER_CHECKPOINTS){
+      if(hoursUntil > cp) continue;
+      const ref = `[ref:${m.id}-${cp}]`;
+      const { data: existing } = await sb.from("sl_notifications").select("id").ilike("message", `%${ref}%`).limit(1);
+      if(existing && existing.length) continue;
+      const projName = (m.project_kind === "interior" ? m.sl_interior_projects?.name : m.sl_projects?.name) || "a project";
+      const label = cp<=3 ? "starting very soon" : `in about ${cp} hours`;
+      await sb.from("sl_notifications").insert({
+        id: uid(), message: `🗓 Meeting reminder — ${projName}: ${m.next_meeting_date} ${m.next_meeting_time||''}${m.next_meeting_location?' at '+m.next_meeting_location:''} (${label}) ${ref}`,
+        created_at: new Date().toISOString()
+      });
+      created = true;
+    }
+  }
+  if(created) await loadNotifications();
+}
 function updateNotifBadges(){
   const unread = notifCache.filter(n=>!n.read_at).length;
   document.querySelectorAll(".notifBadge").forEach(el=>{
@@ -322,7 +351,7 @@ function openNotifModal(){
       <div class="modalHead"><h3>Notifications</h3><button class="iconbtn" onclick="closeModal()">✕</button></div>
       ${notifCache.length ? notifCache.map(n=>`
         <div class="userRow" style="cursor:pointer; ${n.read_at?'opacity:.55;':''}" onclick="markNotifRead('${n.id}')">
-          <div><div class="nm">${n.message}</div><div class="meta">${new Date(n.created_at).toLocaleString("en-GB")}</div></div>
+          <div><div class="nm">${stripNotifRef(n.message)}</div><div class="meta">${new Date(n.created_at).toLocaleString("en-GB")}</div></div>
           ${!n.read_at ? '<span class="pill pill-progress">new</span>' : ''}
         </div>`).join("") : '<div class="empty">No notifications yet.</div>'}
       <div class="btnRow"><button class="btn-ghost btn" onclick="closeModal()">Close</button></div>
@@ -689,7 +718,7 @@ function openWorkCostModal(taskId, taskName){
       <div class="field"><label>Amount</label><input id="wc_amount" type="number" value="0"></div>
       <div class="btnRow" style="margin-top:0;"><button class="btn-ghost btn" onclick="closeModal()">Cancel</button><button class="btn" onclick="saveWorkCost('${taskId}')">Add</button></div>
       <div style="font-size:12px; font-weight:600; margin:14px 0 6px;">Entries so far (adds up to Actual Cost)</div>
-      ${entries.length ? entries.map(c=>`<div class="userRow"><div><div class="nm">${catLabel[c.category]||c.category} — ৳${Number(c.amount).toLocaleString()}</div><div class="meta">${c.description||''} ${c.assigned_employee_id?'· '+employeeNameById(c.assigned_employee_id):''} · ${c.date}</div></div></div>`).join("") : '<div class="empty">No cost entries yet — material and vendor bills can be added here as they come in.</div>'}
+      ${entries.length ? entries.map(c=>`<div class="userRow"><div><div class="nm">${catLabel[c.category]||c.category} — ৳${Number(c.amount).toLocaleString()}</div><div class="meta">${c.description||''} ${c.assigned_employee_id?'· '+employeeNameById(c.assigned_employee_id):''} · ${c.date}</div></div>${isAdmin()?`<button class="delBtn" title="Edit this entry" onclick="openEditCostModal('${c.id}','${taskId}','${taskName.replace(/'/g,"&apos;")}')">✎</button>`:''}</div>`).join("") : '<div class="empty">No cost entries yet — material and vendor bills can be added here as they come in.</div>'}
     </div>
   </div>`;
 }
@@ -705,6 +734,42 @@ async function saveWorkCost(taskId){
   });
   if(error){ alert("Couldn't save: "+error.message); return; }
   await loadProjectData(); openWorkCostModal(taskId, document.querySelector('.modalHead h3').textContent.replace('Add Cost · ',''));
+  renderTab();
+}
+function openEditCostModal(costId, taskId, taskName){
+  const c = (cache.workCosts||[]).find(x=>x.id===costId); if(!c) return;
+  document.getElementById("modalRoot").innerHTML = `
+  <div class="modalOverlay" onclick="if(event.target===this) closeModal()">
+    <div class="modal">
+      <div class="modalHead"><h3>Edit Cost Entry · ${taskName}</h3><button class="iconbtn" onclick="closeModal()">✕</button></div>
+      <div class="field"><label>Category</label>
+        <select id="ec_category">
+          <option value="material" ${c.category==='material'?'selected':''}>Material</option>
+          <option value="vendor" ${c.category==='vendor'?'selected':''}>Vendor</option>
+          <option value="mobilization" ${c.category==='mobilization'?'selected':''}>Mobilization</option>
+        </select>
+      </div>
+      <div class="field"><label>Assign employee</label>
+        <select id="ec_employee"><option value="">— Unassigned —</option>${officeCache.directory.map(e=>`<option value="${e.id}" ${e.id===c.assigned_employee_id?'selected':''}>${e.sl_users?.name||'-'}</option>`).join("")}</select>
+      </div>
+      <div class="field"><label>Date</label><input id="ec_date" type="date" value="${c.date||''}"></div>
+      <div class="field"><label>Description</label><input id="ec_desc" value="${(c.description||'').replace(/"/g,'&quot;')}"></div>
+      <div class="field"><label>Amount</label><input id="ec_amount" type="number" value="${Number(c.amount||0)}"></div>
+      <div class="btnRow" style="margin-top:0;"><button class="btn-ghost btn" onclick="openWorkCostModal('${taskId}','${taskName.replace(/'/g,"&apos;")}')">Back</button><button class="btn" onclick="saveEditedCost('${costId}','${taskId}','${taskName.replace(/'/g,"&apos;")}')">Save changes</button></div>
+    </div>
+  </div>`;
+}
+async function saveEditedCost(costId, taskId, taskName){
+  const amount = Number(document.getElementById("ec_amount").value||0);
+  if(!amount){ alert("Enter an amount greater than 0."); return; }
+  const { error } = await sb.from("sl_work_costs").update({
+    category: document.getElementById("ec_category").value,
+    assigned_employee_id: document.getElementById("ec_employee").value || null,
+    date: document.getElementById("ec_date").value, description: document.getElementById("ec_desc").value.trim(),
+    amount,
+  }).eq("id", costId);
+  if(error){ alert("Couldn't save: "+error.message); return; }
+  await loadProjectData(); openWorkCostModal(taskId, taskName);
   renderTab();
 }
 function openAddTaskModal(){
